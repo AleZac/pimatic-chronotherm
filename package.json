@@ -1,0 +1,51 @@
+{
+  "name": "pimatic-cronoaccesospento",
+  "description": "Chrono plugin for weekly schedule",
+  "author": {
+    "name": "Alessandro Zaccaria",
+    "url": "https://github.com/AleZac"
+  },
+  "contributors": [
+    {
+    }
+  ],
+  "main": "cronoaccesospento",
+  "files": [
+    "cronoaccesospento.coffee",
+    "README.md",
+    "LICENSE",
+    "cronoaccesospento-config-schema.coffee",
+    "device-config-schema.coffee"
+  ],
+  "keywords": [
+    "Cron",
+    "Pimatic"
+  ],
+  "version": "0.9.0",
+  "homepage": "https://github.com/AleZac/pimatic-plugin-cronoaccesospento",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AleZac/pimatic-plugin-cronoaccesospento.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AleZac/pimatic-plugin-cronoaccesospento/issues"
+  },
+  "license": "GPL-2.0",
+  "maintainers": [
+    {
+      "name": "Zacca",
+      "url": "https://github.com/AleZac"
+    }
+  ],
+  "configSchema": "cronoaccesospento-config-schema.coffee",
+  "dependencies": {
+  },
+  "peerDependencies": {
+    "pimatic": ">=0.8.0 <1.0.0"
+  },
+  "engines": {
+    "node": ">0.8.x",
+    "npm": ">1.1.x"
+  }
+}

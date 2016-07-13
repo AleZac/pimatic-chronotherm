@@ -1,0 +1,17 @@
+# This is an example on how to load the plugin in the config.json. It is NOT the complete config file of Pimatic!
+
+"plugins": [
+  {
+    "plugin": "cronoaccesospento"
+  }
+],
+
+"devices": [
+  {
+    "id": "boohhhhh",
+    "class": "CronoAccesoSpentoDevice",
+    "name": "Crono acceso spento",
+    "temperatureRef": "$homeduino-airclimate.temperature",
+    "humidityRef": "$homeduino-airclimate.humidity"
+  }
+]
