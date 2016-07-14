@@ -38,6 +38,18 @@ module.exports = (env) ->
       cas3:
         description: "Variable to insert value"
         type: "string"
+      cas4:
+        description: "Variable to insert value"
+        type: "string"
+      cas5:
+        description: "Variable to insert value"
+        type: "string"
+      cas6:
+        description: "Variable to insert value"
+        type: "string"
+      cas7:
+        description: "Variable to insert value"
+        type: "string"
       result:
         description: "Result"
         type: "string"
@@ -91,7 +103,7 @@ module.exports = (env) ->
           )
           @_createGetter(name, evaluate)
       super()
-      setInterval( ( => @requestValue() ), 120 * 1000) # do the loop every 2 minutes
+      setInterval( ( => @requestValue() ), 2 * 1000) # do the loop every 2 minutes
       
       
     destroy: () ->
@@ -106,6 +118,15 @@ module.exports = (env) ->
       l05 = @_fromVariableValue(@cas5)
       l06 = @_fromVariableValue(@cas6)
       l07 = @_fromVariableValue(@cas7)
+      
+      console.log l01
+      console.log l02
+      console.log l03
+      console.log l04
+      console.log l05
+      console.log l06
+      console.log l07
+      
       
       tempo = new Date()
       ora = tempo.getHours() #prende solo l'ora non i minuti / get the hours
@@ -125,7 +146,7 @@ module.exports = (env) ->
         test = @trova_giorno(giornods, i)
         if test
           array01 = test  #return the right array
-      
+          
       
       lung_array01 = array01.length #trova la lunghezza dell'array / find array lenght
       array_esatto = array01

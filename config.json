@@ -8,10 +8,15 @@
 
 "devices": [
   {
-    "id": "boohhhhh",
+    "id": "provacas",
     "class": "CronoAccesoSpentoDevice",
-    "name": "Crono acceso spento",
-    "temperatureRef": "$homeduino-airclimate.temperature",
-    "humidityRef": "$homeduino-airclimate.humidity"
+    "name": "Crono Acceso Spento",
+    "cas1Ref": "$giorno1",
+    "cas2Ref": "$giorno2",
+    "cas3Ref": "$giorno3",
+    "cas4Ref": "$giorno4",
+    "cas5Ref": "$giorno5",
+    "cas6Ref": "$giorno6",
+    "cas7Ref": "$giorno7"
   }
 ]
