@@ -103,7 +103,7 @@ module.exports = (env) ->
           )
           @_createGetter(name, evaluate)
       super()
-      setInterval( ( => @requestValue() ), 2 * 1000) # do the loop every 2 minutes
+      setInterval( ( => @requestValue() ), 120 * 1000) # do the loop every 2 minutes
       
       
     destroy: () ->
