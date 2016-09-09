@@ -1,0 +1,22 @@
+<script id="CronoAccesoSpentoDevice-template" type="text/template">
+  <li class="sortable device no-header cronoaccesospentodevice">
+    <label data-bind="text: name, tooltip: $data.labelTooltipHtml" class="device-label"></label>
+      <div class="globale">
+      <div class="graph">
+        <div data-bind="foreach: $data.paginaweb()">
+          <div class="bar" data-bind="style: {width: larghezza, height: altezza, left: posizione}">
+            <span data-bind="text: temperatura">
+          </div>
+          
+        </div>
+      </div>
+      <div class="orari">
+        <div data-bind="foreach: $data.paginaweb()">
+          <div class="linea" data-bind="style: {width: larghezza, left: posizione}">
+            <span data-bind="text: orario">
+        </div>
+      </div>
+      </div>
+  </li>
+
+</script>
