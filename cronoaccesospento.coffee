@@ -14,8 +14,17 @@ module.exports = (env) ->
         createCallback: (config, lastState) =>
           return new CronoAccesoSpentoDevice(config, lastState)
       })
+      # wait till all plugins are loaded
+      @framework.on "after init", =>
+      # Check if the mobile-frontent was loaded and get a instance
+        mobileFrontend = @framework.pluginManager.getPlugin 'mobile-frontend'
+        if mobileFrontend?
+          mobileFrontend.registerAssetFile 'js', "pimatic-cronoaccesospento/app/cas-page.coffee"
+          mobileFrontend.registerAssetFile 'css', "pimatic-cronoaccesospento/app/cas.css"
+          mobileFrontend.registerAssetFile 'html', "pimatic-cronoaccesospento/app/cas.html"
+        else
+          env.logger.warn "your plugin could not find the mobile-frontend. No gui will be available"
 
-  plugin = new CronoAccesoSpentoPlugin
 
   class CronoAccesoSpentoDevice extends env.devices.Device
 
@@ -27,6 +36,7 @@ module.exports = (env) ->
     cas6: 0
     cas7: 0
     result: 0
+    perweb: 0
 
     attributes:
       cas1:
@@ -53,22 +63,29 @@ module.exports = (env) ->
       result:
         description: "Result"
         type: "string"
+      perweb:
+        description: "perweb"
+        type: "string"
+
+    template: "CronoAccesoSpentoDevice"
+
 
     constructor: (@config, lastState) ->
       @id = @config.id
       @name = @config.name
-      @cas1 = lastState?.cas1?.value or 0;
-      @cas2 = lastState?.cas2?.value or 0;
-      @cas3 = lastState?.cas3?.value or 0;
-      @cas4 = lastState?.cas4?.value or 0;
-      @cas5 = lastState?.cas5?.value or 0;
-      @cas6 = lastState?.cas6?.value or 0;
-      @cas7 = lastState?.cas7?.value or 0;
-      @result = lastState?.result?.value or 0;
+      @cas1 = lastState?.cas1?.value or 0
+      @cas2 = lastState?.cas2?.value or 0
+      @cas3 = lastState?.cas3?.value or 0
+      @cas4 = lastState?.cas4?.value or 0
+      @cas5 = lastState?.cas5?.value or 0
+      @cas6 = lastState?.cas6?.value or 0
+      @cas7 = lastState?.cas7?.value or 0
+      @result = lastState?.result?.value or 0
+      @perweb = lastState?.perweb?.value or 0
 
       @varManager = plugin.framework.variableManager #so you get the variableManager
       @_exprChangeListeners = []
-      
+
       for reference in [
         {name: "cas1", expression: @config.cas1Ref},
         {name: "cas2", expression: @config.cas2Ref},
@@ -103,13 +120,13 @@ module.exports = (env) ->
           )
           @_createGetter(name, evaluate)
       super()
-      setInterval( ( => @requestValue() ), 120 * 1000) # do the loop every 2 minutes
-      
-      
+      setInterval( ( => @requestValue() ), 5 * 1000) # do the loop every 2 minutes
+
+
     destroy: () ->
       @varManager.cancelNotifyOnChange(cl) for cl in @_exprChangeListeners
       super()
-    
+
     requestValue: ->
       l01 = @_fromVariableValue(@cas1)
       l02 = @_fromVariableValue(@cas2)
@@ -118,16 +135,16 @@ module.exports = (env) ->
       l05 = @_fromVariableValue(@cas5)
       l06 = @_fromVariableValue(@cas6)
       l07 = @_fromVariableValue(@cas7)
-      
-      console.log l01
+      array01 = []
+      console.log "A", l01
       console.log l02
       console.log l03
       console.log l04
       console.log l05
       console.log l06
       console.log l07
-      
-      
+
+
       tempo = new Date()
       ora = tempo.getHours() #prende solo l'ora non i minuti / get the hours
       minuti = tempo.getMinutes() #get the minutes
@@ -140,29 +157,59 @@ module.exports = (env) ->
       giornods = tempo.getDay() #numero del giorno della settimana
       if giornods is 0          # get the number of the day and change sunday to 7
         giornods = 7
-            
+
+      console.log "B", giornods
+
       lista_variabili = [[l01],[l02],[l03],[l04],[l05],[l06],[l07]]# create a multi array
       for i in lista_variabili     # find the right day inside multi array
         test = @trova_giorno(giornods, i)
         if test
           array01 = test  #return the right array
-          
-      
-      lung_array01 = array01.length #trova la lunghezza dell'array / find array lenght
-      array_esatto = array01
-      array01.shift() #elimina il primo dato dall'array / delete the first value of array
+
+      console.log lista_variabili
+      console.log "C", array01
+
+      if array01.length > 0
+        lung_array01 = array01.length #trova la lunghezza dell'array / find array length
+        array_esatto = array01
+        array01.shift() #elimina il primo dato dall'array / delete the first value of array
+
+      else
+        console.log "ERROR IN VARIABLES"
+        array01 = []
+
+
       array_orari = (x for x in array01 by 2) #prende solo i dati pari (orari) / take values by 2
-        
+
+
+
+      console.log "D", lung_array01
+
+
+
+
+      console.log "E", array_esatto
+      console.log "F", array_orari
+
+
       nao = for valore_array_orari in array_orari #porta ogni valore a *100, problemi bug
         Math.round(valore_array_orari*100)        #all values *100 to solve a bug
       nao.push(2359) #aggiunge il valore 2359 alla fine dell' array / insert 2359 to the end of array
-      
+
+
+      console.log array01
+
       for valore_array_orari, pao in nao
         if orario >= nao[pao] and orario < nao[pao + 1] #find the position of the right value
-          risultato = array_esatto[(pao * 2)+1] 
+          risultato = array_esatto[(pao * 2)+1]
 
-      env.logger.debug 'result of cas', @_toVariableValue(risultato)
-      @_setAttribute 'result of cas', @_toVariableValue(risultato)
+      console.log "XXXXX", risultato
+
+      env.logger.debug 'result', @_toVariableValue(risultato)
+      @_setAttribute 'result', @_toVariableValue(risultato)
+      env.logger.debug 'perweb', @_toVariableValue(array01)
+      @_setAttribute 'perweb', @_toVariableValue(array01)
+
 
     trova_giorno: (giornods, array01) ->
       array01 = array01.toString().split(',') # trasforma variabile in un array di numeri
@@ -186,5 +233,7 @@ module.exports = (env) ->
       return t
 
     getResult: -> Promise.resolve(@result)
+    getPerweb: -> Promise.resolve(@perweb)
 
+  plugin = new CronoAccesoSpentoPlugin
   return plugin
