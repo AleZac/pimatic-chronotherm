@@ -26,5 +26,12 @@ module.exports = {
       cas7Ref:
         description: "Variable to insert value"
         type: "string"
+      realtemperature:
+        description: "variable with the real temperature"
+        type: "string"
+      interval:
+        description: "time in seconds to refresh the schedule"
+        type: "number"
+        defaults: 120
   }
 }

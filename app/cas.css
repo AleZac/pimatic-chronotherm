@@ -2,48 +2,81 @@
     text-align: left;
     line-height: 30px;
 }
-.globale{
+/*PULSANTI*/
+#index li.cronoaccesospentodevice .box-gradi-tondo{
+  border: 1px solid #ddd;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  vertical-align: middle;
+  margin: 5px;
+  margin-left: 10px;
+}
+#index li.cronoaccesospentodevice .tempEffettiva {
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  background-color: #6dba1c;
+  font-size: 1.4em;
+  font-weight: bold;
+}
+#index li.cronoaccesospentodevice .tempPresunta {
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  font-size: 1.1em;
+  margin-top: 10px;
+}
+#index li.cronoaccesospentodevice div.controls {
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  text-align: right;
+  white-space: normal;
+}
+#index li.cronoaccesospentodevice div.controls .ui-controlgroup {
+  display: inline-block;
+  margin: 0;
+  margin-left: 4px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  border-radius: 50%;
+}
+/*GRAFICO*/
+#index li.cronoaccesospentodevice .globale{
     width: 100%;
     float: left;
     margin-top: 26px;
 }
-.graph {
+#index li.cronoaccesospentodevice .graph {
     position: relative;
     width: 100%;
     height: 100px;
-/*     border: 1px solid #aeaeae; */
 }
-.bar {
-    position: absolute;
-    bottom: 0;
-    background: linear-gradient(to top, #61c419 0%, #FF4141 85px);
-/*      box-shadow: 3px -2px 5px gray, 3px -1px 10px red inset; */
-    border-radius: 2px 2px 0 0; 
-/*     font-size: 33px; */
-    font-weight: bold;
-}
-.graph span {
-    position: absolute;
-    margin-top: -26px;
-    width: 100%;
-    text-align: center;    
-}
-.orari {
+#index li.cronoaccesospentodevice .orari {
     position: relative;
     width: 100%;
     height: 20px;
     line-height: 20px;
-/*     border: 1px solid grey; */
 }
-.linea {
+#index li.cronoaccesospentodevice .bar {
+    position: absolute;
+    bottom: 0;
+    background: linear-gradient(to top, #61c419 0%, #FF4141 85px);
+    border-radius: 2px 2px 0 0;
+    font-weight: bold;
+}
+#index li.cronoaccesospentodevice .linea {
     position: absolute;
     border-left: 1px solid #61c419;
-    /* border: 3px solid #ff4141; */
-/*     border-image: radial-gradient(circle at bottom left, red, transparent 50%); */
-/*     border-image-slice: 1; */
 }
-.orari span {
+#index li.cronoaccesospentodevice .orari span {
     font-size: 0.7em;
-    margin-left: 2px;
-    
+    margin: 2px;
+}
+#index li.cronoaccesospentodevice .graph span {
+    position: absolute;
+    margin-top: -26px;
+    width: 100%;
+    text-align: center;
 }

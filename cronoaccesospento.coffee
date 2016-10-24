@@ -35,8 +35,13 @@ module.exports = (env) ->
     cas5: 0
     cas6: 0
     cas7: 0
+    realtemperature: 0
     result: 0
     perweb: 0
+    _mode: null
+    _manuTemp: null
+    _autoTemp: null
+
 
     attributes:
       cas1:
@@ -60,12 +65,41 @@ module.exports = (env) ->
       cas7:
         description: "Variable to insert value"
         type: "string"
+      realtemperature:
+        description: "Variable with real temperature"
+        type: "string"
       result:
         description: "Result"
         type: "string"
       perweb:
         description: "perweb"
         type: "string"
+      manuTemp:
+        label: "Manual temperature"
+        description: "Manual insert temperature"
+        type: "number"
+      autoTemp:
+        label: "Automatic temperature"
+        description: "Automatic temperature"
+        type: "string"
+      mode:
+        description: "The current mode"
+        type: "string"
+        enum: ["auto", "manu", "off"]
+
+    actions:
+      changeModeTo:
+        params:
+          mode:
+            type: "string"
+      changeManuTempTo:
+        params:
+          manuTemp:
+            type: "number"
+      changeAutoTempTo:
+        params:
+          autoTemp:
+            type: "number"
 
     template: "CronoAccesoSpentoDevice"
 
@@ -80,8 +114,12 @@ module.exports = (env) ->
       @cas5 = lastState?.cas5?.value or 0
       @cas6 = lastState?.cas6?.value or 0
       @cas7 = lastState?.cas7?.value or 0
+      @realtemperature = lastState?.realtemperature?.value or 0
       @result = lastState?.result?.value or 0
       @perweb = lastState?.perweb?.value or 0
+      @requestValue(lastState?.autoTemp?.value or 0)
+      @setManuTemp(lastState?.manuTemp?.value or 25)
+      @setMode(lastState?.mode?.value or "auto")
 
       @varManager = plugin.framework.variableManager #so you get the variableManager
       @_exprChangeListeners = []
@@ -94,6 +132,7 @@ module.exports = (env) ->
         {name: "cas5", expression: @config.cas5Ref}
         {name: "cas6", expression: @config.cas6Ref}
         {name: "cas7", expression: @config.cas7Ref}
+        {name: "realtemperature", expression: @config.realtemperature}
       ]
         do (reference) =>
           name = reference.name
@@ -119,32 +158,25 @@ module.exports = (env) ->
             )
           )
           @_createGetter(name, evaluate)
-      super()
-      setInterval( ( => @requestValue() ), 5 * 1000) # do the loop every 2 minutes
 
+      super()
+      @requestValue()
+      setInterval( ( => @requestValue() ), @config.interval * 1000) # do the loop every X minutes
 
     destroy: () ->
       @varManager.cancelNotifyOnChange(cl) for cl in @_exprChangeListeners
       super()
 
-    requestValue: ->
-      l01 = @_fromVariableValue(@cas1)
-      l02 = @_fromVariableValue(@cas2)
-      l03 = @_fromVariableValue(@cas3)
-      l04 = @_fromVariableValue(@cas4)
-      l05 = @_fromVariableValue(@cas5)
-      l06 = @_fromVariableValue(@cas6)
-      l07 = @_fromVariableValue(@cas7)
+    requestValue: (autoTemp) ->
+      if autoTemp is @_autoTemp then return
+      l01 = @cas1
+      l02 = @cas2
+      l03 = @cas3
+      l04 = @cas4
+      l05 = @cas5
+      l06 = @cas6
+      l07 = @cas7
       array01 = []
-      console.log "A", l01
-      console.log l02
-      console.log l03
-      console.log l04
-      console.log l05
-      console.log l06
-      console.log l07
-
-
       tempo = new Date()
       ora = tempo.getHours() #prende solo l'ora non i minuti / get the hours
       minuti = tempo.getMinutes() #get the minutes
@@ -153,63 +185,37 @@ module.exports = (env) ->
       else
         orario = "#{ora}.#{minuti}"
       orario = Math.round(orario*100)
-
       giornods = tempo.getDay() #numero del giorno della settimana
       if giornods is 0          # get the number of the day and change sunday to 7
         giornods = 7
-
-      console.log "B", giornods
-
       lista_variabili = [[l01],[l02],[l03],[l04],[l05],[l06],[l07]]# create a multi array
       for i in lista_variabili     # find the right day inside multi array
         test = @trova_giorno(giornods, i)
         if test
           array01 = test  #return the right array
-
-      console.log lista_variabili
-      console.log "C", array01
-
       if array01.length > 0
         lung_array01 = array01.length #trova la lunghezza dell'array / find array length
         array_esatto = array01
         array01.shift() #elimina il primo dato dall'array / delete the first value of array
-
       else
-        console.log "ERROR IN VARIABLES"
         array01 = []
-
-
       array_orari = (x for x in array01 by 2) #prende solo i dati pari (orari) / take values by 2
-
-
-
-      console.log "D", lung_array01
-
-
-
-
-      console.log "E", array_esatto
-      console.log "F", array_orari
-
-
       nao = for valore_array_orari in array_orari #porta ogni valore a *100, problemi bug
         Math.round(valore_array_orari*100)        #all values *100 to solve a bug
-      nao.push(2359) #aggiunge il valore 2359 alla fine dell' array / insert 2359 to the end of array
-
-
-      console.log array01
-
+      nao.push(2359) #aggiunge il valore 2359 alla fine dell' array
+                     #insert 2359 to the end of array
       for valore_array_orari, pao in nao
         if orario >= nao[pao] and orario < nao[pao + 1] #find the position of the right value
-          risultato = array_esatto[(pao * 2)+1]
+          autoTemp = array_esatto[(pao * 2)+1]
+      @_autoTemp = autoTemp
 
-      console.log "XXXXX", risultato
+      if @_mode is "auto"
+        @_result = @_autoTemp
 
-      env.logger.debug 'result', @_toVariableValue(risultato)
-      @_setAttribute 'result', @_toVariableValue(risultato)
-      env.logger.debug 'perweb', @_toVariableValue(array01)
-      @_setAttribute 'perweb', @_toVariableValue(array01)
-
+      @emit "autoTemp", @_autoTemp
+      @emit "result", @_result
+      @emit "perweb", array01
+      return Promise.resolve()
 
     trova_giorno: (giornods, array01) ->
       array01 = array01.toString().split(',') # trasforma variabile in un array di numeri
@@ -226,14 +232,53 @@ module.exports = (env) ->
         @[attributeName] = value
         @emit attributeName, value
 
-    _fromVariableValue: (t) ->
-      return t
+    setMode: (mode) ->
+      if mode is @_mode then return
+      switch mode
+        when 'auto'
+          @_result = @_autoTemp
+          @emit "result", @_result
+        when 'manu'
+          @_result = @_manuTemp
+          @emit "result", @_result
+        when 'off'
+          @_result = 0
+          @emit "result", @_result
+      @_mode = mode
+      @emit "mode", @_mode
+      return Promise.resolve()
 
-    _toVariableValue: (t) ->
-      return t
+    setManuTemp: (manuTemp) ->
+      if manuTemp is @_manuTemp then return
+      @_manuTemp = manuTemp
+      if @_mode is "manu"
+        @_result = @_manuTemp
+        @emit "result", @_result
+      @emit "manuTemp", @_manuTemp
 
-    getResult: -> Promise.resolve(@result)
-    getPerweb: -> Promise.resolve(@perweb)
+      return Promise.resolve()
+
+    # Actions : called from UI & rules
+    changeModeTo: (mode) ->
+      @setMode(mode)
+      return Promise.resolve()
+    changeManuTempTo: (manuTemp) ->
+      @setManuTemp(manuTemp)
+      return Promise.resolve()
+
+    getMode: () ->  Promise.resolve(@_mode)
+    getManuTemp: () -> Promise.resolve(@_manuTemp)
+    getAutoTemp: () -> Promise.resolve(@autoTemp)
+    getPerweb: () -> Promise.resolve(@perweb)
+    getResult: () -> Promise.resolve(@result)
+    getRealTemperature: () -> Promise.resolve(@realtemperature)
+    getCas1: () -> Promise.resolve(@cas1)
+    getCas2: () -> Promise.resolve(@cas2)
+    getCas3: () -> Promise.resolve(@cas3)
+    getCas4: () -> Promise.resolve(@cas4)
+    getCas5: () -> Promise.resolve(@cas5)
+    getCas6: () -> Promise.resolve(@cas6)
+    getCas7: () -> Promise.resolve(@cas7)
 
   plugin = new CronoAccesoSpentoPlugin
   return plugin

@@ -17,6 +17,7 @@
     "cas4Ref": "$giorno4",
     "cas5Ref": "$giorno5",
     "cas6Ref": "$giorno6",
-    "cas7Ref": "$giorno7"
+    "cas7Ref": "$giorno7",
+    "realtemperature": "$realtemperature"
   }
 ]
