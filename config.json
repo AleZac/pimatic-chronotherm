@@ -18,6 +18,9 @@
     "cas5Ref": "$giorno5",
     "cas6Ref": "$giorno6",
     "cas7Ref": "$giorno7",
-    "realtemperature": "$realtemperature"
+    "realtemperature": "$realtemperature",
+    "interval": 240,
+    "turnauto":5000,
+    "offtemperature": 4
   }
 ]

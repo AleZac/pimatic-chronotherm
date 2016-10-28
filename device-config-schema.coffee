@@ -32,6 +32,11 @@ module.exports = {
       interval:
         description: "time in seconds to refresh the schedule"
         type: "number"
-        defaults: 120
+      turnauto:
+        description: "time in minutes to restore from manu to auto"
+        type: "number"
+      offtemperature:
+        description: "the temperature for the off button"
+        type: "number"
   }
 }

@@ -125,8 +125,8 @@ module.exports = (env) ->
       @_exprChangeListeners = []
 
       for reference in [
-        {name: "cas1", expression: @config.cas1Ref},
-        {name: "cas2", expression: @config.cas2Ref},
+        {name: "cas1", expression: @config.cas1Ref}
+        {name: "cas2", expression: @config.cas2Ref}
         {name: "cas3", expression: @config.cas3Ref}
         {name: "cas4", expression: @config.cas4Ref}
         {name: "cas5", expression: @config.cas5Ref}
@@ -241,12 +241,17 @@ module.exports = (env) ->
         when 'manu'
           @_result = @_manuTemp
           @emit "result", @_result
+          if @config.turnauto isnt 0
+            callback = =>
+              @changeModeTo('auto')
+            setTimeout callback, @config.turnauto * 1000
         when 'off'
-          @_result = 0
+          @_result = @config.offtemperature
           @emit "result", @_result
       @_mode = mode
       @emit "mode", @_mode
       return Promise.resolve()
+
 
     setManuTemp: (manuTemp) ->
       if manuTemp is @_manuTemp then return
