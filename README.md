@@ -1,15 +1,15 @@
 #Pimatic ChronoTherm
 Thermostat plugin for the Pimatic
 
-
+###Configuration
 To include the plugin in pimatic add the device to plugin section with...
-
+```
 {
   "plugin": "chronotherm"
 },
-
+```
 then add device to config.json
-
+```
 {
   "id": "room",
   "class": "ChronoThermDevice",
@@ -26,7 +26,7 @@ then add device to config.json
   "turnauto": 180,
   "offtemperature": 4
 }
-
+```
 
 In pimatic started by creating a variable named $di1
 The variable is to be filled in this way…
@@ -65,23 +65,23 @@ For those who do not use, the value of its variable must be 0
 IMPORTANT is that every days of the week must be present in a variable
 See EXAMPLE
 
-realtemperature is the link to a variable sensor that detects the temperature in real time, it will then be displayed in the green circle of the web interface.
+***realtemperature*** is the link to a variable sensor that detects the temperature in real time, it will then be displayed in the green circle of the web interface.
 
-interval is the cycle in seconds for updating the schedule.
+***interval*** is the cycle in seconds for updating the schedule.
 240 seconds should be sufficient.
 
-turnauto is the time in minutes that passes after which disables manu and returns automatic
+***turnauto*** is the time in minutes that passes after which disables manu and returns automatic
 if turnauto = 0 the mode stay to manu
-offtemperature is the temperature when you put to OFF
+***offtemperature*** is the temperature when you put to OFF
 
-WEB INTERFACE
+###WEB INTERFACE
 The green circle indicates the actual temperature detected
 The blue circle indicates the supposed temperature programming
 Auto indicates that the supposed temperature will be based on the schedule
 Manu indicates that the supposed temperature will be to set manually
 OFF will set the supposed temperature to 0
 
-EXAMPLE 1
+###EXAMPLE 1
 
   "cas1Ref": "$di1",
   "cas2Ref": "$di2",
@@ -102,7 +102,7 @@ All the day of the week are in these two variables then i do not need more varia
 then i close all assigning all the other variables to $di3 ($di3=0)
 The important thing is that every day of the week are included in the first numbers
 
-EXAMPLE 2
+###EXAMPLE 2
 
   "cas1Ref": "$di1",
   "cas2Ref": "$di2",
