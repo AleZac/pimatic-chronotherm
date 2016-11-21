@@ -40,13 +40,13 @@ Example:
 In this case monday ( 1 is monday, 2 is Tuesday, 3 is Wednesday… 7 is Sunday)
 
 Subsequent numbers are respectively the hours followed by the temperature in that time.
-- 1,***0,10***,12.00,25
+- 1,***0***,*10*,12.00,25
 
-At midnight (the second number between commas is 0) sets the temperature at 10 grades(the third number between commas is 10) and sets the variable $ ID.result = 10
+At **midnight** (the second number between commas is 0) sets the temperature at *10* grades(the third number between commas is 10) and then the plugin sets the variable $ ID.result = 10
 
-- 1,0,10,***12.00,25***
+- 1,0,10,***12.00***,*25*
 
-At noon sets the temperature to 25 grades ($ ID.result = 25)
+At ***noon*** sets the temperature to *25* grades ($ ID.result = 25)
 
 You can add as many hours as you want with respective temperature,
 important is that the first number of hours is always 0 (midnight)
@@ -107,11 +107,16 @@ if turnauto = 0 the mode stay to manu
 - $di2=7,0,18,11,4,17.50,22
 - $di3=0
 
-so…variable
-- $di1 = Monday Tuesday Wednesday Thursday Friday Saturday at midnight -> 19°,
-at 12.02 -> 21°and from 21.30 to 23.59 -> 18°
-variable
-- $di2 = Sunday at midnight -> 18°, at 11.00 -> 4° and from 17.50 to 23.59 -> 22°
+so…variable =
+- $di1 = Monday Tuesday Wednesday Thursday Friday Saturday
+  *at midnight -> 19°,
+  *at 12.02 -> 21°
+  *and from 21.30 to 23.59 -> 18°
+variable =
+- $di2 = Sunday
+  *at midnight -> 18°,
+  *at 11.00 -> 4°
+  *and from 17.50 to 23.59 -> 22°
 
 All the day of the week are in these two variables then i do not need more variable then i close all assigning all the other variables to $di3 ($di3=0)
 
