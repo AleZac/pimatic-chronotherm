@@ -1,6 +1,8 @@
 #Pimatic ChronoTherm
 Thermostat plugin for the Pimatic
 
+![alt tag](https://github.com/AleZac/pimatic-chronotherm/blob/master/screenshot/ChronoTherm.png)
+
 ###Configuration
 To include the plugin in pimatic add the device to plugin section with...
 ```
