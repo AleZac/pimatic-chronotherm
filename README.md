@@ -108,15 +108,15 @@ if turnauto = 0 the mode stay to manu
 - $di3=0
 
 so…variable =
-- $di1 = Monday Tuesday Wednesday Thursday Friday Saturday
-  *at midnight -> 19°,
-  *at 12.02 -> 21°
-  *and from 21.30 to 23.59 -> 18°
+* $di1 = Monday Tuesday Wednesday Thursday Friday Saturday
+  * at midnight -> 19°,
+  * at 12.02 -> 21°
+  * and from 21.30 to 23.59 -> 18°
 variable =
-- $di2 = Sunday
-  *at midnight -> 18°,
-  *at 11.00 -> 4°
-  *and from 17.50 to 23.59 -> 22°
+* $di2 = Sunday
+  * at midnight -> 18°,
+  * at 11.00 -> 4°
+  * and from 17.50 to 23.59 -> 22°
 
 All the day of the week are in these two variables then i do not need more variable then i close all assigning all the other variables to $di3 ($di3=0)
 
