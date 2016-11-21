@@ -1,5 +1,5 @@
 {
-  "name": "pimatic-cronoaccesospento",
+  "name": "pimatic-chronotherm",
   "description": "Chrono plugin for weekly schedule",
   "author": {
     "name": "Alessandro Zaccaria",
@@ -9,27 +9,28 @@
     {
     }
   ],
-  "main": "cronoaccesospento",
+  "main": "chronotherm",
   "files": [
-    "cronoaccesospento.coffee",
+    "chronotherm.coffee",
     "README.md",
     "LICENSE",
-    "cronoaccesospento-config-schema.coffee",
+    "chronotherm-config-schema.coffee",
     "device-config-schema.coffee"
   ],
   "keywords": [
     "Cron",
-    "Pimatic"
+    "Pimatic",
+    "thermostat"
   ],
-  "version": "0.9.3",
-  "homepage": "https://github.com/AleZac/pimatic-plugin-cronoaccesospento",
+  "version": "0.9.4",
+  "homepage": "https://github.com/AleZac/pimatic-chronotherm",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/AleZac/pimatic-plugin-cronoaccesospento.git"
+    "url": "https://github.com/AleZac/pimatic-chronotherm.git"
   },
   "bugs": {
-    "url": "https://github.com/AleZac/pimatic-plugin-cronoaccesospento/issues"
+    "url": "https://github.com/AleZac/pimatic-chronotherm/issues"
   },
   "license": "GPL-2.0",
   "maintainers": [
@@ -38,7 +39,7 @@
       "url": "https://github.com/AleZac"
     }
   ],
-  "configSchema": "cronoaccesospento-config-schema.coffee",
+  "configSchema": "chronotherm-config-schema.coffee",
   "dependencies": {
   },
   "peerDependencies": {

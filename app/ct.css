@@ -1,0 +1,90 @@
+#index li.chronothermdevice {
+    text-align: left;
+    line-height: 30px;
+}
+/* ERRORE */
+#index li.chronothermdevice .errore_web{
+  text-align: center;
+  color: red;
+  width: 100%;
+  float: left;
+  font-weight: bold;
+}
+/*PULSANTI*/
+#index li.chronothermdevice .box-gradi-tondo{
+  border: 1px solid #ddd;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  vertical-align: middle;
+  margin: 5px;
+  margin-left: 10px;
+}
+#index li.chronothermdevice .tempEffettiva {
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  background-color: green;
+  font-size: 1.4em;
+  font-weight: bold;
+}
+#index li.chronothermdevice .tempPresunta {
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  font-size: 1.1em;
+  margin-top: 10px;
+}
+#index li.chronothermdevice div.controls {
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  text-align: right;
+  white-space: normal;
+}
+#index li.chronothermdevice div.controls .ui-controlgroup {
+  display: inline-block;
+  margin: 0;
+  margin-left: 4px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  border-radius: 50%;
+}
+/*GRAFICO*/
+#index li.chronothermdevice .globale{
+    width: 100%;
+    float: left;
+    margin-top: 26px;
+}
+#index li.chronothermdevice .graph {
+    position: relative;
+    width: 100%;
+    height: 100px;
+}
+#index li.chronothermdevice .orari {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    line-height: 20px;
+}
+#index li.chronothermdevice .bar {
+    position: absolute;
+    bottom: 0;
+    background: linear-gradient(to top, green 0%, red 85px);
+    border-radius: 2px 2px 0 0;
+    font-weight: bold;
+}
+#index li.chronothermdevice .linea {
+    position: absolute;
+    border-left: 1px solid green;
+}
+#index li.chronothermdevice .orari span {
+    font-size: 0.7em;
+    margin: 2px;
+}
+#index li.chronothermdevice .graph span {
+    position: absolute;
+    margin-top: -26px;
+    width: 100%;
+    text-align: center;
+}

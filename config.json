@@ -2,15 +2,15 @@
 
 "plugins": [
   {
-    "plugin": "cronoaccesospento"
+    "plugin": "chronotherm"
   }
 ],
 
 "devices": [
   {
     "id": "provacas",
-    "class": "CronoAccesoSpentoDevice",
-    "name": "Crono Acceso Spento",
+    "class": "ChronoThermDevice",
+    "name": "Chrono Therm",
     "cas1Ref": "$giorno1",
     "cas2Ref": "$giorno2",
     "cas3Ref": "$giorno3",
