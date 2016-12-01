@@ -150,7 +150,7 @@ In this case all the variables are different because all the days are differents
 #Pimatic ChronoTherm lite version
 If you want only a simple chrono for ON and OFF
 
-![alt tag](https://github.com/AleZac/pimatic-chronotherm/blob/master/screenshot/ChronoTherm2.png)
+![alt tag](https://github.com/AleZac/pimatic-chronotherm/blob/master/screenshot/ChronoTherm1.png)
 
 Simple add interface : 1 to the config.json
 
