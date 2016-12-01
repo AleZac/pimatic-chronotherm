@@ -2,38 +2,73 @@
   <li class="sortable device no-header chronothermdevice">
     <label data-bind="text: name, tooltip: $data.labelTooltipHtml" class="device-label"></label>
     <div class="errore_web" data-bind="visible: errore_web == 0">ERROR - You have entered a wrong variable/s</div>
-    <div class="pulsanti" data-bind="visible: errore_web != 0">
-      <div class="controls">
-        <div class="ui-controlgroup box-gradi-tondo tempEffettiva">
-          <span data-bind="text: tempEffettiva"></span><span>°</span>
-        </div>
-        <div class="ui-controlgroup box-gradi-tondo tempPresunta ui-bar-a">
-          <span data-bind="text: tempPresunta"></span><span>°</span>
-        </div>
-        <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
-          <div class="ui-controlgroup-controls">
-            <a class="ui-first-child ui-btn ui-corner-all" name="pulsauto" data-bind="click: autoMode">auto</a>
-            <a class="ui-btn ui-corner-all" name="pulsmanu" data-bind="click: manuMode">manu</a>
-            <a class="ui-last-child ui-btn ui-corner-all" name="pulsoff" data-bind= "click: offMode">off</a>
+    <div class="interfaccia0" data-bind="visible: interfaccia == 0">
+      <div class="pulsanti" data-bind="visible: errore_web != 0">
+        <div class="controls">
+          <div class="ui-controlgroup box-gradi-tondo tempEffettiva">
+            <span data-bind="text: tempEffettiva"></span><span>°</span>
           </div>
-          <div class="spinbox no-carousel-slide">
-            <input type="text" data-role="spinbox" name="spin" value="0" min="0" max="100" data-mini="true" step="0.5" data-bind="textInput: inputValue">
+          <div class="ui-controlgroup box-gradi-tondo tempPresunta ui-bar-a">
+            <span data-bind="text: tempPresunta"></span><span>°</span>
           </div>
-        </div>
-      </div>
-  </div>
-    <div class="globale">
-      <div class="graph" data-bind="visible: errore_web != 0">
-        <div data-bind="foreach: $data.paginaweb()">
-          <div class="bar" data-bind="style: {width: larghezza, height: altezza, left: posizione}">
-            <span data-bind="text: temperatura">
+          <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
+            <div class="ui-controlgroup-controls">
+              <a class="ui-first-child ui-btn ui-corner-all" name="pulsauto" data-bind="click: autoMode">auto</a>
+              <a class="ui-btn ui-corner-all" name="pulsmanu" data-bind="click: manuMode">manu</a>
+              <a class="ui-btn ui-corner-all" name="pulson" data-bind="click: onMode">boost</a>
+              <a class="ui-last-child ui-btn ui-corner-all" name="pulsoff" data-bind= "click: offMode">off</a>
+            </div>
+            <div class="spinbox no-carousel-slide">
+              <input type="text" data-role="spinbox" name="spin" value="0" min="0" max="100" data-mini="true" step="0.5" data-bind="textInput: inputValue">
+            </div>
           </div>
         </div>
       </div>
-      <div class="orari" data-bind="visible: errore_web != 0">
-        <div data-bind="foreach: $data.paginaweb()">
-          <div class="linea" data-bind="style: {width: larghezza, left: posizione}">
-            <span data-bind="text: orario">
+      <div class="globale">
+        <div class="graph" data-bind="visible: errore_web != 0">
+          <div data-bind="foreach: $data.paginaweb()">
+            <div class="bar" data-bind="style: {width: larghezza, height: altezza, left: posizione}">
+              <span data-bind="text: temperatura"></span>
+            </div>
+          </div>
+        </div>
+        <div class="orari" data-bind="visible: errore_web != 0">
+          <div data-bind="foreach: $data.paginaweb()">
+            <div class="linea" data-bind="style: {width: larghezza, left: posizione}">
+              <span data-bind="text: orario"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="interfaccia1" data-bind="visible: interfaccia == 1">
+      <div class="pulsanti">
+        <div class="controls">
+          <div class="ui-controlgroup box-gradi-tondo tempPresunta ui-bar-a" data-bind="style:{background: tempPresunta() == 1 ? 'green' : 'red' }">
+            <span data-bind="text: tempPresunta() == 1 ? 'ON' : 'OFF'"></span>
+          </div>
+          <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
+            <div class="ui-controlgroup-controls">
+              <a class="ui-first-child ui-btn ui-corner-all" name="pulsauto" data-bind="click: autoMode">auto</a>
+              <a class="ui-btn ui-corner-all" name="pulson" data-bind="click: onMode">on</a>
+              <a class="ui-last-child ui-btn ui-corner-all" name="pulsoff" data-bind= "click: offMode">off</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="globale">
+        <div class="graph1">
+          <div data-bind="foreach: $data.paginaweb()">
+            <div class="bar1" data-bind="style: {backgroundColor: colore, width: larghezza, left: posizione}">
+            </div>
+          </div>
+        </div>
+        <div class="orari">
+          <div data-bind="foreach: $data.paginaweb()">
+            <div class="linea" data-bind="style: {width: larghezza, left: posizione}">
+              <span data-bind="text: orario">
+            </div>
+          </div>
         </div>
       </div>
     </div>

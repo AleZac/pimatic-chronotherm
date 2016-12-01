@@ -26,7 +26,8 @@ then add device to config.json
   "realtemperature": "$switch.manuTemp",
   "interval": 240,
   "turnauto": 180,
-  "offtemperature": 4
+  "offtemperature": 4,
+  "ontemperature" : 30
 }
 ```
 
@@ -81,6 +82,8 @@ if turnauto = 0 the mode stay to manu
 
 ***offtemperature*** is the temperature when you put to OFF
 
+***ontemperature*** is the temperature when you put to ON
+
 ###WEB INTERFACE
 
 ***The green circle*** indicates the actual temperature detected
@@ -91,7 +94,9 @@ if turnauto = 0 the mode stay to manu
 
 ***Manu*** indicates that the supposed temperature will be to set manually
 
-***OFF*** will set the supposed temperature to 0
+***Boost*** will set the supposed temperature to ***"ontemperature"*** for ***"turnauto"*** minutes
+
+***OFF*** will set the supposed temperature to ***"offtemperature"*** for ***"turnauto"*** minutes
 
 ###EXAMPLE 1
 ```
@@ -141,3 +146,45 @@ The important thing is that every day of the week are included in the first numb
 - $di7=7,0,20,16,17
 
 In this case all the variables are different because all the days are differents
+
+#Pimatic ChronoTherm lite version
+If you want only a simple chrono for ON and OFF
+
+![alt tag](https://github.com/AleZac/pimatic-chronotherm/blob/master/screenshot/ChronoTherm2.png)
+
+Simple add interface : 1 to the config.json
+
+```
+{
+  "id": "room",
+  "class": "ChronoThermDevice",
+  "name": "Room",
+  "interface": 1,
+  "cas1Ref": "$di1",
+  "cas2Ref": "$di2",
+  "cas3Ref": "$di3",
+  "cas4Ref": "$di4",
+  "cas5Ref": "$di5",
+  "cas6Ref": "$di6",
+  "cas7Ref": "$di7",
+  "realtemperature": "$switch.manuTemp",
+  "interval": 240,
+  "turnauto": 180,
+  "offtemperature": 4
+}
+```
+
+The rules are the same but, instead of entering temperatures, are entered 0 for OFF and 1 for ON
+
+```
+  "cas1Ref": "$di1",
+  "cas2Ref": "$di2",
+  "cas3Ref": "$di3",
+  "cas4Ref": "$di3",
+  "cas5Ref": "$di3",
+  "cas6Ref": "$di3",
+  "cas7Ref": "$di3",
+```
+- $di1=123456,0,***1***,12.02,***0***,21.30,***1***
+- $di2=7,0,***1***,11,***0***,17.50,***1***
+- $di3=0

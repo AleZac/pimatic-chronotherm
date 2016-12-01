@@ -45,16 +45,15 @@ module.exports = (env) ->
     attributes:
       result:
         description: "Result"
-        type: "string"
+        type: "number"
       mode:
         description: "The current mode"
         type: "string"
-        enum: ["auto", "manu", "off"]
+        enum: ["auto", "manu", "on", "off"]
       manuTemp:
         label: "Temperature Setpoint"
         description: "The temp that should be set"
         type: "number"
-        discrete: true
       autoTemp:
         label: "Automatic temperature"
         description: "Automatic temperature"
@@ -119,9 +118,11 @@ module.exports = (env) ->
       # @setManuTemp(lastState?.manuTemp?.value or 25)
       @setMode(lastState?.mode?.value or "auto")
       @intattivo = 0
-
       @setManuTemp(lastState?.manuTemp?.value or 20)
-
+      if @config.interface?
+        @interfaccia = @config.interface
+      else
+        @interfaccia = 0
       @varManager = plugin.framework.variableManager #so you get the variableManager
       @_exprChangeListeners = []
 
@@ -161,6 +162,7 @@ module.exports = (env) ->
           )
           @_createGetter(name, evaluate)
       super()
+
       @errore_giorni()
 
     errori: (name, val) ->
@@ -168,17 +170,20 @@ module.exports = (env) ->
         clearTimeout @intervalId
         @intattivo = 0
       @errore = 0
-      if (/([^0-9\,\.])/g.test(val))
+      if (/([^0-9\,\.])/g.test(val)) #check if it's only numbers and , .
+        env.logger.debug "Inside character error"
         @errore = 1
-      if val % 2 is 0 #controlla che i numeri siano dispari
+      if val % 2 is 0 #check if all numbers are even
+        env.logger.debug "Inside odd error"
         @errore = 1
       conteggio = val.toString().split(',')
-      if conteggio[1]
-        if conteggio[1] isnt "0"
-          @errore = 1
+      if conteggio[1]? and conteggio[1]*1000 isnt 0 #check if second number is 0
+        env.logger.debug "Inside 0 error"
+        @errore = 1
       for elementi in conteggio[1..] by 2
         moltiplica = elementi * 100
-        if moltiplica > 2359
+        if moltiplica > 2359 #check if all hours are logical
+          env.logger.debug "Inside hours error"
           @errore = 1
       if @errore is 1 #tutto ok procedi
         @errore = 0
@@ -244,15 +249,15 @@ module.exports = (env) ->
       tempo = new Date()
       ora = tempo.getHours() #prende solo l'ora non i minuti / get the hours
       minuti = tempo.getMinutes() #get the minutes
-      if minuti < 10              # corregge problema dello 0 nei minuti minori di 10
+      if minuti < 10    # corregge problema dello 0 nei minuti minori di 10
         orario = "#{ora}.0#{minuti}" # correct when minutes less then 10 add a 0
       else
         orario = "#{ora}.#{minuti}"
       orario = Math.round(orario*100)
       giornods = tempo.getDay() #numero del giorno della settimana
-      if giornods is 0          # get the number of the day and change sunday to 7
+      if giornods is 0  # get the number of the day and change sunday to 7
         giornods = 7
-      lista_variabili = [[l01],[l02],[l03],[l04],[l05],[l06],[l07]]# create a multi array
+      lista_variabili = [[l01],[l02],[l03],[l04],[l05],[l06],[l07]]# multi array
       for i in lista_variabili     # find the right day inside multi array
         test = @trova_giorno(giornods, i)
         if test
@@ -265,17 +270,17 @@ module.exports = (env) ->
         array01 = []
       array_orari = (x for x in array01 by 2) #prende solo i dati pari (orari) / take values by 2
       nao = for valore_array_orari in array_orari #porta ogni valore a *100, problemi bug
-        Math.round(valore_array_orari*100)        #all values *100 to solve a bug
+        Math.round(valore_array_orari*100)     #all values *100 to solve a bug
       nao.push(2359) #aggiunge il valore 2359 alla fine dell' array
                      #insert 2359 to the end of array
       for valore_array_orari, pao in nao
         if orario >= nao[pao] and orario < nao[pao + 1] #find the position of the right value
           autoTemp = array_esatto[(pao * 2)+1]
-      @_autoTemp = autoTemp
+      @_autoTemp = Number(autoTemp)
       if @_mode is "auto"
-        @_result = @_autoTemp
+        @result = @_autoTemp
       @emit "autoTemp", @_autoTemp
-      @emit "result", @_result
+      @emit "result", @result
       @emit "perweb", array01
       return Promise.resolve()
 
@@ -286,7 +291,7 @@ module.exports = (env) ->
       array_dei_giorni = yyy.split('')  # trasforma il primo numero nell'array dei giorni
                                         # transform the first value to a string
       array_dei_numeri = array_dei_giorni.map(Number) # trasforma la stringa di array in un array di numeri
-      if giornods in array_dei_numeri                 # transform the string of day to a new array
+      if giornods in array_dei_numeri   # transform the string of day to a new array
         return array01
 
     _setAttribute: (attributeName, value) ->
@@ -298,28 +303,42 @@ module.exports = (env) ->
       if mode is @_mode then return
       switch mode
         when 'auto'
-          @_result = @_autoTemp
-          @emit "result", @_result
+          @result = @_autoTemp
+          @emit "result", @result
         when 'manu'
-          @_result = @_manuTemp
-          @emit "result", @_result
-          if @config.turnauto isnt 0
-            callback = =>
-              @changeModeTo('auto')
-            setTimeout callback, @config.turnauto * 1000
+          @result = @_manuTemp
+          @emit "result", @result
+          @turnautomode()
+        when 'on'
+          if @config.interface is 0
+            @result = @config.ontemperature
+          else
+            @result = 1
+          @emit "result", @result
+          @turnautomode()
         when 'off'
-          @_result = @config.offtemperature
-          @emit "result", @_result
+          if @config.interface is 0
+            @result = @config.offtemperature
+          else
+            @result = 0
+          @emit "result", @result
+          @turnautomode()
       @_mode = mode
       @emit "mode", @_mode
       return Promise.resolve()
+
+    turnautomode: ->
+      if @config.turnauto isnt 0
+        callback = =>
+          @changeModeTo('auto')
+        setTimeout callback, @config.turnauto * 1000 * 60
 
     setManuTemp: (manuTemp) ->
       if manuTemp is @_manuTemp then return
       @_manuTemp = manuTemp
       if @_mode is "manu"
-        @_result = @_manuTemp
-        @emit "result", @_result
+        @result = @_manuTemp
+        @emit "result", @result
       @emit "manuTemp", @_manuTemp
       return Promise.resolve()
 
@@ -335,8 +354,7 @@ module.exports = (env) ->
 
     getManuTemp: () ->  Promise.resolve(@_manuTemp)
     getMode: () ->  Promise.resolve(@_mode)
-    getManuTemp: () -> Promise.resolve(@_manuTemp)
-    getAutoTemp: () -> Promise.resolve(@autoTemp)
+    getAutoTemp: () -> Promise.resolve(@_autoTemp)
     getPerweb: () -> Promise.resolve(@perweb)
     getResult: () -> Promise.resolve(@result)
     getRealTemperature: () -> Promise.resolve(@realtemperature)

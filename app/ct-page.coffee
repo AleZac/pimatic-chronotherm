@@ -15,6 +15,10 @@ $(document).on( "templateinit", (event) ->
         @inputValue(value)
         attrValue = value
       )
+      if @device.config.interface?
+        @interfaccia = @device.config.interface
+      else
+        @interfaccia = 0
 
       attribute = @getAttribute("result")
       @tempPresunta = ko.observable attribute.value()
@@ -39,6 +43,7 @@ $(document).on( "templateinit", (event) ->
 
       @pulsauto = $(elements).find('[name=pulsauto]')
       @pulsmanu = $(elements).find('[name=pulsmanu]')
+      @pulson = $(elements).find('[name=pulson]')
       @pulsoff = $(elements).find('[name=pulsoff]')
       @input = $(elements).find('.spinbox input')
       @input.spinbox()
@@ -49,6 +54,7 @@ $(document).on( "templateinit", (event) ->
 
     manuMode: -> @changeModeTo "manu"
     offMode: -> @changeModeTo "off"
+    onMode: -> @changeModeTo "on"
     autoMode: -> @changeModeTo "auto"
     setTemp: -> @changeTemperatureTo "#{@inputValue.value()}"
 
@@ -68,14 +74,22 @@ $(document).on( "templateinit", (event) ->
         when 'auto'
           @pulsmanu.removeClass('ui-btn-active')
           @pulsoff.removeClass('ui-btn-active')
+          @pulson.removeClass('ui-btn-active')
           @pulsauto.addClass('ui-btn-active')
         when 'manu'
           @pulsmanu.addClass('ui-btn-active')
           @pulsoff.removeClass('ui-btn-active')
+          @pulson.removeClass('ui-btn-active')
           @pulsauto.removeClass('ui-btn-active')
         when 'off'
           @pulsmanu.removeClass('ui-btn-active')
           @pulsoff.addClass('ui-btn-active')
+          @pulson.removeClass('ui-btn-active')
+          @pulsauto.removeClass('ui-btn-active')
+        when 'on'
+          @pulsmanu.removeClass('ui-btn-active')
+          @pulsoff.removeClass('ui-btn-active')
+          @pulson.addClass('ui-btn-active')
           @pulsauto.removeClass('ui-btn-active')
       return
 
@@ -96,8 +110,17 @@ $(document).on( "templateinit", (event) ->
         if isNaN(larg)
           larg = 100 - pos
         nuovovalore = (valore2 * 100) / valore_max
-        alt = Math.round(nuovovalore) + 1  # regolo l'altezza in base al max valore dei gradi
-        barra = {orario: valore1, temperatura: "#{valore2}°", posizione: "#{pos}%", larghezza: "#{larg}%", altezza: "#{alt}%"}
+        if valore2 is "0" then col = "red" else col = "green" #colore barre
+        alt = Math.round(nuovovalore) + 1
+                  # regolo l'altezza in base al max valore dei gradi
+        barra = {
+          orario: valore1,
+          temperatura: "#{valore2}°",
+          posizione: "#{pos}%",
+          larghezza: "#{larg}%",
+          altezza: "#{alt}%",
+          colore: "#{col}"
+        }
         tabella.push(barra)
       return tabella
 

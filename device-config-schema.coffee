@@ -5,6 +5,11 @@ module.exports = {
     type: "object"
     extensions: ["xLink", "xAttributeOptions"]
     properties:
+      interface:
+        description: "User interface"
+        type: "number"
+        default: 0
+        required: false
       cas1Ref:
         description: "Variable to insert value"
         type: "string"
@@ -37,6 +42,9 @@ module.exports = {
         type: "number"
       offtemperature:
         description: "the temperature for the off button"
+        type: "number"
+      ontemperature:
+        description: "the temperature for the on button"
         type: "number"
   }
 }
