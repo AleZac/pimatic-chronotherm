@@ -104,3 +104,27 @@
     line-height: 15px;
     text-align: center;
 }
+/*TIMEOUT*/
+#index li.chronothermdevice .nascondi{
+  display: none;
+}
+#index li.chronothermdevice .puls-mezzo-acceso{
+  background-color: green;
+}
+#index li.chronothermdevice .timeoutinput{
+  text-align: center;
+  width: 55px;
+  font-weight: bold;
+}
+#index li.chronothermdevice .timeoutgruppo{
+  margin: 5px;
+}
+#index li.chronothermdevice input#timeoutinput{
+  color: green;
+}
+#index li.chronothermdevice .ui-first-child{
+  border-radius: 20px 0 0 20px;
+}
+#index li.chronothermdevice .ui-last-child{
+  border-radius: 0 20px 20px 0;
+}

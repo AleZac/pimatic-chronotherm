@@ -155,7 +155,11 @@ module.exports = (env) ->
             ).then((val) =>
               if val
                 env.logger.debug name, val
-                @errori name, val
+                if name is "realtemperature"
+                  val = val.toFixed(1)
+                  @_setAttribute name, val
+                else
+                  @errori name, val
               return @[name]
 
             )

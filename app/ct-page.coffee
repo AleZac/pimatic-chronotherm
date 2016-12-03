@@ -5,7 +5,6 @@ $(document).on( "templateinit", (event) ->
       super(templData, @device)
 
       @inputValue = ko.observable()
-
       @stAttr = @getAttribute('manuTemp')
       @inputValue(@stAttr.value())
 
@@ -37,9 +36,14 @@ $(document).on( "templateinit", (event) ->
       ).extend({ rateLimit: { timeout: 1000, method: "notifyWhenChangesStop" } })
 
       @errore_web = @getAttribute('perweb').value()
+      @modo = "auto"
 
     afterRender: (elements) ->
       super(elements)
+
+      @apri = $(elements).find('[name=apri]')
+      @timeouttempo = 0
+      # document.getElementById("timeoutinput").value = "00:00:00"
 
       @pulsauto = $(elements).find('[name=pulsauto]')
       @pulsmanu = $(elements).find('[name=pulsmanu]')
@@ -52,11 +56,65 @@ $(document).on( "templateinit", (event) ->
       @getAttribute('mode').value.subscribe( => @updateButtons() )
       return
 
-    manuMode: -> @changeModeTo "manu"
-    offMode: -> @changeModeTo "off"
-    onMode: -> @changeModeTo "on"
+    timeoutapri: ->
+      @apri.removeClass('nascondi')
+      @timeouttempo = 0
+      document.getElementById("timeoutinput").value = "00:00:00"
+    somma1m: -> @insertTimeOutTempo(60)
+    somma5m: -> @insertTimeOutTempo(300)
+    somma30m: -> @insertTimeOutTempo(1800)
+    somma1h: -> @insertTimeOutTempo(3600)
+    timeoutalways: ->
+      # @changeModeTo @modo
+      document.getElementById("timeoutinput").value = "ALWAYS"
+    timeoutreset: ->
+      @timeouttempo = 0
+      document.getElementById("timeoutinput").value = "00:00:00"
+    timeoutcancel: ->
+      @apri.addClass('nascondi')
+      @resettaMezzoColore()
+    timeoutok: ->
+      @resettaMezzoColore()
+      # @timeout = document.getElementById("timeoutinput").value
+      @apri.addClass('nascondi')
+      if document.getElementById("timeoutinput").value is "ALWAYS"
+        @changeModeTo @modo
+      else
+        @changeModeTo @modo
+        callback = =>
+          @changeModeTo('auto')
+        setTimeout callback, @timeouttempo * 1000
+    insertTimeOutTempo: (time) ->
+      @timeouttempo = @timeouttempo + time
+      mostra_orologio = new Date(@timeouttempo * 1000).toISOString().substr(11, 8)
+      document.getElementById("timeoutinput").value = mostra_orologio
+
+
+    manuMode: ->
+      @resettaMezzoColore()
+      @pulsmanu.addClass('puls-mezzo-acceso')
+      @modo = "manu"
+      @timeout = 0
+      @timeoutapri()
+    offMode: ->
+      @resettaMezzoColore()
+      @pulsoff.addClass('puls-mezzo-acceso')
+      @modo = "off"
+      @timeout = 0
+      @timeoutapri()
+    onMode: ->
+      @resettaMezzoColore()
+      @pulson.addClass('puls-mezzo-acceso')
+      @modo = "on"
+      @timeout = 0
+      @timeoutapri()
+
     autoMode: -> @changeModeTo "auto"
     setTemp: -> @changeTemperatureTo "#{@inputValue.value()}"
+    resettaMezzoColore: ->
+      @pulsmanu.removeClass('puls-mezzo-acceso')
+      @pulsoff.removeClass('puls-mezzo-acceso')
+      @pulson.removeClass('puls-mezzo-acceso')
 
     changeModeTo: (mode) ->
       @device.rest.changeModeTo({mode}, global: no)

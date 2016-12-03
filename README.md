@@ -25,7 +25,6 @@ then add device to config.json
   "cas7Ref": "$di7",
   "realtemperature": "$switch.manuTemp",
   "interval": 240,
-  "turnauto": 180,
   "offtemperature": 4,
   "ontemperature" : 30
 }
@@ -94,9 +93,11 @@ if turnauto = 0 the mode stay to manu
 
 ***Manu*** indicates that the supposed temperature will be to set manually
 
-***Boost*** will set the supposed temperature to ***"ontemperature"*** for ***"turnauto"*** minutes
+***On*** will set the supposed temperature to ***"ontemperature"***
 
-***OFF*** will set the supposed temperature to ***"offtemperature"*** for ***"turnauto"*** minutes
+***OFF*** will set the supposed temperature to ***"offtemperature"***
+
+Once click to ***Manu***,***On***,***Off*** It will be asked how long you should be active that function
 
 ###EXAMPLE 1
 ```

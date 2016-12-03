@@ -20,7 +20,7 @@
     "cas7Ref": "$giorno7",
     "realtemperature": "$realtemperature",
     "interval": 240,
-    "turnauto":5000,
-    "offtemperature": 4
+    "offtemperature": 4,
+    "ontemperature": 21
   }
 ]
