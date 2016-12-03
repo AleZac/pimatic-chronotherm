@@ -170,7 +170,6 @@ Simple add interface : 1 to the config.json
   "cas7Ref": "$di7",
   "realtemperature": "$switch.manuTemp",
   "interval": 240,
-  "turnauto": 180,
   "offtemperature": 4
 }
 ```
