@@ -22,32 +22,29 @@
               <input type="text" data-role="spinbox" name="spin" value="0" min="0" max="100" data-mini="true" step="0.5" data-bind="textInput: inputValue">
             </div>
           </div>
-
           <div class="nascondi" name="apri">
-            <!-- Modal content -->
             <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
-            <div class="timeoutgruppo ui-controlgroup-controls">
-              <a class="ui-first-child ui-btn ui-corner-all" name="add1m" data-bind="click: somma1m">+1min</a>
-              <a class="ui-btn ui-corner-all" name="add5m" data-bind="click: somma5m">+5min</a>
-              <a class="ui-btn ui-corner-all" name="add30m" data-bind="click: somma30m">+30min</a>
-              <a class="ui-btn ui-corner-all" name="add1h" data-bind="click: somma1h">+1h</a>
-              <a class="ui-last-child ui-btn ui-corner-all" name="always" data-bind="click: timeoutalways">Always</a>
+              <div class="timeoutgruppo ui-controlgroup-controls">
+                <a class="ui-first-child ui-btn ui-corner-all" name="add1m" data-bind="click: somma1m">+1min</a>
+                <a class="ui-btn ui-corner-all" name="add5m" data-bind="click: somma5m">+5min</a>
+                <a class="ui-btn ui-corner-all" name="add30m" data-bind="click: somma30m">+30min</a>
+                <a class="ui-btn ui-corner-all" name="add1h" data-bind="click: somma1h">+1h</a>
+                <a class="ui-last-child ui-btn ui-corner-all" name="always" data-bind="click: timeoutalways">Always</a>
+              </div>
+              <div class="timeoutgruppo ui-controlgroup-controls">
+                <input class="ui-first-child timeoutinput ui-btn ui-corner-all" name="timeoutinput" value="0" type="text" readonly="readonly">
+                <a class="ui-last-child ui-btn ui-corner-all" name="treset" data-bind="click: timeoutreset">Reset</a>
+              </div>
+              <div class="timeoutgruppo ui-controlgroup-controls">
+                <a class="ui-first-child ui-btn ui-corner-all" name="tcancel" data-bind="click: timeoutcancel">Cancel</a>
+                <a class="ui-last-child ui-btn ui-corner-all" name="tok" data-bind="click: timeoutok">OK</a>
+              </div>
             </div>
-            <div class="timeoutgruppo ui-controlgroup-controls">
-                <input class="ui-first-child timeoutinput ui-btn ui-corner-all" id="timeoutinput" type="text" readonly="readonly">
-              <a class="ui-last-child ui-btn ui-corner-all" name="treset" data-bind="click: timeoutreset">Reset</a>
-            </div>
-            <div class="timeoutgruppo ui-controlgroup-controls">
-              <a class="ui-first-child ui-btn ui-corner-all" name="tcancel" data-bind="click: timeoutcancel">Calcel</a>
-              <a class="ui-last-child ui-btn ui-corner-all" name="tok" data-bind="click: timeoutok">OK</a>
+            <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
+              <div class="ui-controlgroup-controls">
+              </div>
             </div>
           </div>
-          <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
-            <div class="ui-controlgroup-controls">
-            </div>
-          </div>
-          </div>
-
         </div>
       </div>
       <div class="globale">
@@ -80,6 +77,29 @@
               <a class="ui-last-child ui-btn ui-corner-all" name="pulsoff" data-bind= "click: offMode">off</a>
             </div>
           </div>
+          <div class="nascondi" name="apri">
+            <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
+              <div class="timeoutgruppo ui-controlgroup-controls">
+                <a class="ui-first-child ui-btn ui-corner-all" name="add1m" data-bind="click: somma1m">+1min</a>
+                <a class="ui-btn ui-corner-all" name="add5m" data-bind="click: somma5m">+5min</a>
+                <a class="ui-btn ui-corner-all" name="add30m" data-bind="click: somma30m">+30min</a>
+                <a class="ui-btn ui-corner-all" name="add1h" data-bind="click: somma1h">+1h</a>
+                <a class="ui-last-child ui-btn ui-corner-all" name="always" data-bind="click: timeoutalways">Always</a>
+              </div>
+              <div class="timeoutgruppo ui-controlgroup-controls">
+                <input class="ui-first-child timeoutinput ui-btn ui-corner-all" name="timeoutinput" value="0" type="text" readonly="readonly">
+                <a class="ui-last-child ui-btn ui-corner-all" name="treset" data-bind="click: timeoutreset">Reset</a>
+              </div>
+              <div class="timeoutgruppo ui-controlgroup-controls">
+                <a class="ui-first-child ui-btn ui-corner-all" name="tcancel" data-bind="click: timeoutcancel">Cancel</a>
+                <a class="ui-last-child ui-btn ui-corner-all" name="tok" data-bind="click: timeoutok">OK</a>
+              </div>
+            </div>
+            <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
+              <div class="ui-controlgroup-controls">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="globale">
@@ -93,10 +113,10 @@
           <div data-bind="foreach: $data.paginaweb()">
             <div class="linea" data-bind="style: {width: larghezza, left: posizione}">
               <span data-bind="text: orario">
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </li>
+    </li>
 </script>

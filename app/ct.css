@@ -115,12 +115,10 @@
   text-align: center;
   width: 55px;
   font-weight: bold;
+  color: green;
 }
 #index li.chronothermdevice .timeoutgruppo{
   margin: 5px;
-}
-#index li.chronothermdevice input#timeoutinput{
-  color: green;
 }
 #index li.chronothermdevice .ui-first-child{
   border-radius: 20px 0 0 20px;

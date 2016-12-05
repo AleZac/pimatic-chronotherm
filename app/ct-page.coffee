@@ -37,14 +37,12 @@ $(document).on( "templateinit", (event) ->
 
       @errore_web = @getAttribute('perweb').value()
       @modo = "auto"
-
     afterRender: (elements) ->
       super(elements)
 
       @apri = $(elements).find('[name=apri]')
-      @timeouttempo = 0
       # document.getElementById("timeoutinput").value = "00:00:00"
-
+      @finetempo = $(elements).find('[name=timeoutinput]')
       @pulsauto = $(elements).find('[name=pulsauto]')
       @pulsmanu = $(elements).find('[name=pulsmanu]')
       @pulson = $(elements).find('[name=pulson]')
@@ -59,36 +57,40 @@ $(document).on( "templateinit", (event) ->
     timeoutapri: ->
       @apri.removeClass('nascondi')
       @timeouttempo = 0
-      document.getElementById("timeoutinput").value = "00:00:00"
+      @finetempo.val('00:00:00')
+
+
+
     somma1m: -> @insertTimeOutTempo(60)
+    # somma1m: -> @insertTimeOutTempo(5)
     somma5m: -> @insertTimeOutTempo(300)
     somma30m: -> @insertTimeOutTempo(1800)
     somma1h: -> @insertTimeOutTempo(3600)
+
+
     timeoutalways: ->
-      # @changeModeTo @modo
-      document.getElementById("timeoutinput").value = "ALWAYS"
+      @finetempo.val('ALWAYS')
     timeoutreset: ->
       @timeouttempo = 0
-      document.getElementById("timeoutinput").value = "00:00:00"
+      @finetempo.val('00:00:00')
     timeoutcancel: ->
       @apri.addClass('nascondi')
       @resettaMezzoColore()
     timeoutok: ->
       @resettaMezzoColore()
-      # @timeout = document.getElementById("timeoutinput").value
       @apri.addClass('nascondi')
-      if document.getElementById("timeoutinput").value is "ALWAYS"
+      if @finetempo.val() is "ALWAYS"
         @changeModeTo @modo
       else
         @changeModeTo @modo
         callback = =>
           @changeModeTo('auto')
         setTimeout callback, @timeouttempo * 1000
+
     insertTimeOutTempo: (time) ->
       @timeouttempo = @timeouttempo + time
       mostra_orologio = new Date(@timeouttempo * 1000).toISOString().substr(11, 8)
-      document.getElementById("timeoutinput").value = mostra_orologio
-
+      @finetempo.val(mostra_orologio)
 
     manuMode: ->
       @resettaMezzoColore()

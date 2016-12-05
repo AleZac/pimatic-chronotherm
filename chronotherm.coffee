@@ -312,30 +312,21 @@ module.exports = (env) ->
         when 'manu'
           @result = @_manuTemp
           @emit "result", @result
-          @turnautomode()
         when 'on'
           if @config.interface is 0
             @result = @config.ontemperature
           else
             @result = 1
           @emit "result", @result
-          @turnautomode()
         when 'off'
           if @config.interface is 0
             @result = @config.offtemperature
           else
             @result = 0
           @emit "result", @result
-          @turnautomode()
       @_mode = mode
       @emit "mode", @_mode
       return Promise.resolve()
-
-    turnautomode: ->
-      if @config.turnauto isnt 0
-        callback = =>
-          @changeModeTo('auto')
-        setTimeout callback, @config.turnauto * 1000 * 60
 
     setManuTemp: (manuTemp) ->
       if manuTemp is @_manuTemp then return
