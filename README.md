@@ -76,9 +76,6 @@ See EXAMPLE
 ***interval*** is the cycle in seconds for updating the schedule.
 240 seconds should be sufficient.
 
-***turnauto*** is the time in minutes that passes after which disables manu and returns automatic
-if turnauto = 0 the mode stay to manu
-
 ***offtemperature*** is the temperature when you put to OFF
 
 ***ontemperature*** is the temperature when you put to ON
