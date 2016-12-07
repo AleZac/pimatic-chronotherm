@@ -15,7 +15,10 @@
     "README.md",
     "LICENSE",
     "chronotherm-config-schema.coffee",
-    "device-config-schema.coffee"
+    "device-config-schema.coffee",
+    "app/ct-page.coffee",
+    "app/ct.css",
+    "app/ct.html"
   ],
   "keywords": [
     "Cron",

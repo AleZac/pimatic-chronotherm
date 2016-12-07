@@ -37,11 +37,14 @@ $(document).on( "templateinit", (event) ->
 
       @errore_web = @getAttribute('perweb').value()
       @modo = "auto"
+
+      # @aggiornaOrario()
+      # console.log @aggiornaOrario()
+
     afterRender: (elements) ->
       super(elements)
 
       @apri = $(elements).find('[name=apri]')
-      # document.getElementById("timeoutinput").value = "00:00:00"
       @finetempo = $(elements).find('[name=timeoutinput]')
       @pulsauto = $(elements).find('[name=pulsauto]')
       @pulsmanu = $(elements).find('[name=pulsmanu]')
@@ -53,21 +56,15 @@ $(document).on( "templateinit", (event) ->
       @updateButtons()
       @getAttribute('mode').value.subscribe( => @updateButtons() )
       return
-
     timeoutapri: ->
       @apri.removeClass('nascondi')
       @timeouttempo = 0
       @finetempo.val('00:00:00')
-
-
-
     somma1m: -> @insertTimeOutTempo(60)
     # somma1m: -> @insertTimeOutTempo(5)
     somma5m: -> @insertTimeOutTempo(300)
     somma30m: -> @insertTimeOutTempo(1800)
     somma1h: -> @insertTimeOutTempo(3600)
-
-
     timeoutalways: ->
       @finetempo.val('ALWAYS')
     timeoutreset: ->
@@ -189,12 +186,20 @@ $(document).on( "templateinit", (event) ->
       oggi_ora = today.getHours()
       oggi_minuti = today.getMinutes()
       oggi_minuti_corretto = (if oggi_minuti < 10 then "0" else "" )+""+oggi_minuti
-      # oggi_minuti_corretto = oggi_minuti.replace( RE_findSingleDigits, "0$1" )
                                 #corregge errore dei minuti minori di 10
-      posizione = Math.round((oggi_ora+(oggi_minuti/60)) * 1000 / 24)/10 #trova la posizione in %
+      pos = Math.round((oggi_ora+(oggi_minuti/60)) * 1000 / 24)/10 #trova la posizione in %
+      if pos < 50
+        verso = pos
+        allineamento = "right"
+      else
+        verso = pos - 10
+        allineamento = "left"
       orario = oggi_ora + ":" + oggi_minuti_corretto
-      barra_orario = {ora: orario}
-      return barra_orario
+      bandellaorario = {ora: orario, posizione: "#{pos}%", verso: "#{verso}%", allineamento: "#{allineamento}"}
+      console.log orario
+      console.log pos
+      console.log bandellaorario
+      return bandellaorario
 
     getConfig: (name) ->
       if @device.config[name]?

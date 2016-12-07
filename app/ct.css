@@ -126,3 +126,23 @@
 #index li.chronothermdevice .ui-last-child{
   border-radius: 0 20px 20px 0;
 }
+/*Clock*/
+#index li.cronoaccesospentodevice .segnaorario{
+  position: absolute;
+  bottom: 125px;
+  width: 10%;
+  height: 24px;
+  text-align: center;
+  border-bottom: 2px solid #ccc;
+  /*border-radius: 10px 10px 10px 0;*/
+  font-size: 12px;
+}
+#index li.cronoaccesospentodevice .bandella{
+  position: absolute;
+  bottom: 0;
+  width: 2px;
+  height: 127px;
+  background-color: #ccc;
+  /*border: 1px solid #ccc;
+  border-bottom: 0;
+  border-top: 0;*/

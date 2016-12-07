@@ -1,6 +1,7 @@
 <script id="ChronoThermDevice-template" type="text/template">
   <li class="sortable device no-header chronothermdevice">
     <label data-bind="text: name, tooltip: $data.labelTooltipHtml" class="device-label"></label>
+    <!-- <div class="bandella" data-bind="text: aggiornaOrario().ora "PROVA""></div> -->
     <div class="errore_web" data-bind="visible: errore_web == 0">ERROR - You have entered a wrong variable/s</div>
     <div class="interfaccia0" data-bind="visible: interfaccia == 0">
       <div class="pulsanti" data-bind="visible: errore_web != 0">
@@ -54,6 +55,8 @@
               <span data-bind="text: temperatura"></span>
             </div>
           </div>
+        <!-- <div class="bandella" data-bind="style: {left: $data.bandellaorario.posizione}"></div> -->
+        <!-- <div class="segnaorario" data-bind="text: $data.bandellaorario.ora, style: {left: $data.bandellaorario.verso}"></div> -->
         </div>
         <div class="orari" data-bind="visible: errore_web != 0">
           <div data-bind="foreach: $data.paginaweb()">
