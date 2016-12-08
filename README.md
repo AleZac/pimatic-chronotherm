@@ -80,6 +80,15 @@ See EXAMPLE
 
 ***ontemperature*** is the temperature when you put to ON
 
+***Rule to work with Pimatic
+To set the temperature of you thermostat, you have to set a rule like this:
+```
+$room.result is the actually SetPoint of your ChronoThermDevice
+```
+```
+when $room.result changes then set temp of Thermostat to $room.result
+```
+
 ###WEB INTERFACE
 
 ***The green circle*** indicates the actual temperature detected
