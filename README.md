@@ -84,7 +84,7 @@ See EXAMPLE
 
 To set the temperature of you thermostat, you have to set a rule like this:
 ```
-$room.result is the actually SetPoint of your ChronoThermDevice
+$room.result --> is the actually SetPoint of your ChronoThermDevice
 ```
 ```
 when $room.result changes then set temp of Thermostat to $room.result
