@@ -49,7 +49,7 @@ module.exports = (env) ->
       mode:
         description: "The current mode"
         type: "string"
-        enum: ["auto", "manu", "on", "off"]
+        enum: ["auto", "manu", "on", "off", "boost"]
       manuTemp:
         label: "Temperature Setpoint"
         description: "The temp that should be set"
@@ -317,6 +317,9 @@ module.exports = (env) ->
             @result = @config.ontemperature
           else
             @result = 1
+          @emit "result", @result
+        when 'boost'
+          @result = 50
           @emit "result", @result
         when 'off'
           if @config.interface is 0

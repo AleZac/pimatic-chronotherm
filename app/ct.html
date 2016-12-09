@@ -1,7 +1,14 @@
 <script id="ChronoThermDevice-template" type="text/template">
   <li class="sortable device no-header chronothermdevice">
     <label data-bind="text: name, tooltip: $data.labelTooltipHtml" class="device-label"></label>
-    <!-- <div class="bandella" data-bind="text: aggiornaOrario().ora "PROVA""></div> -->
+
+
+
+    <!-- <div class="bandella" data-bind="text: bandellaorario.ora"></div> -->
+    <!-- <div class="bandella" data-bind="text: bandellaorario.ora"></div> -->
+    <!-- <div class="bandella" data-bind="text: provabandella"></div> -->
+    <!-- <div class="bandella" name="barra_orario"></div> -->
+
     <div class="errore_web" data-bind="visible: errore_web == 0">ERROR - You have entered a wrong variable/s</div>
     <div class="interfaccia0" data-bind="visible: interfaccia == 0">
       <div class="pulsanti" data-bind="visible: errore_web != 0">
@@ -17,7 +24,9 @@
               <a class="ui-first-child ui-btn ui-corner-all" name="pulsauto" data-bind="click: autoMode">auto</a>
               <a class="ui-btn ui-corner-all" name="pulsmanu" data-bind="click: manuMode">manu</a>
               <a class="ui-btn ui-corner-all" name="pulson" data-bind="click: onMode">on</a>
+              <a class="ui-btn ui-corner-all" name="pulsboost" data-bind="visible: boost == 1, click: boostMode">boost</a>
               <a class="ui-last-child ui-btn ui-corner-all" name="pulsoff" data-bind= "click: offMode">off</a>
+
             </div>
             <div class="spinbox no-carousel-slide">
               <input type="text" data-role="spinbox" name="spin" value="0" min="0" max="100" data-mini="true" step="0.5" data-bind="textInput: inputValue">
@@ -55,8 +64,12 @@
               <span data-bind="text: temperatura"></span>
             </div>
           </div>
-        <!-- <div class="bandella" data-bind="style: {left: $data.bandellaorario.posizione}"></div> -->
-        <!-- <div class="segnaorario" data-bind="text: $data.bandellaorario.ora, style: {left: $data.bandellaorario.verso}"></div> -->
+          <div class="nascondi" name="apri_blocco_input">
+            <div class="input-bandella" name="input_barra_orario"></div>
+            <div class="input-segnaorario" name="input_segna_orario"></div>
+          </div>
+          <div class="bandella" name="barra_orario"></div>
+          <div class="segnaorario" name="segna_orario"></div>
         </div>
         <div class="orari" data-bind="visible: errore_web != 0">
           <div data-bind="foreach: $data.paginaweb()">
@@ -111,6 +124,12 @@
             <div class="bar1" data-bind="style: {backgroundColor: colore, width: larghezza, left: posizione}">
             </div>
           </div>
+          <div class="nascondi" name="apri_blocco_input">
+            <div class="input-bandella" name="input_barra_orario"></div>
+            <div class="input-segnaorario" name="input_segna_orario"></div>
+          </div>
+          <div class="bandella" name="barra_orario"></div>
+          <div class="segnaorario" name="segna_orario"></div>
         </div>
         <div class="orari">
           <div data-bind="foreach: $data.paginaweb()">

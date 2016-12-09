@@ -18,7 +18,10 @@ $(document).on( "templateinit", (event) ->
         @interfaccia = @device.config.interface
       else
         @interfaccia = 0
-
+      if @device.config.boost?
+        @boost = 1
+      else
+        @boost = 0
       attribute = @getAttribute("result")
       @tempPresunta = ko.observable attribute.value()
       attribute.value.subscribe (newValue) =>
@@ -38,9 +41,6 @@ $(document).on( "templateinit", (event) ->
       @errore_web = @getAttribute('perweb').value()
       @modo = "auto"
 
-      # @aggiornaOrario()
-      # console.log @aggiornaOrario()
-
     afterRender: (elements) ->
       super(elements)
 
@@ -49,10 +49,21 @@ $(document).on( "templateinit", (event) ->
       @pulsauto = $(elements).find('[name=pulsauto]')
       @pulsmanu = $(elements).find('[name=pulsmanu]')
       @pulson = $(elements).find('[name=pulson]')
+      @pulsboost = $(elements).find('[name=pulsboost]')
       @pulsoff = $(elements).find('[name=pulsoff]')
       @input = $(elements).find('.spinbox input')
       @input.spinbox()
 
+      @barraora = $(elements).find('[name=barra_orario]')
+      @segnaora = $(elements).find('[name=segna_orario]')
+      @blocco_input = $(elements).find('[name=apri_blocco_input]')
+      @input_barraora = $(elements).find('[name=input_barra_orario]')
+      @input_segnaora = $(elements).find('[name=input_segna_orario]')
+      @aggiornaOrario()
+      giro_orario = =>
+        @aggiornaOrario()
+        console.log @aggiornaOrario()
+      setInterval giro_orario, 10000
       @updateButtons()
       @getAttribute('mode').value.subscribe( => @updateButtons() )
       return
@@ -76,19 +87,23 @@ $(document).on( "templateinit", (event) ->
     timeoutok: ->
       @resettaMezzoColore()
       @apri.addClass('nascondi')
+      @blocco_input.removeClass('nascondi')
+      @
       if @finetempo.val() is "ALWAYS"
+        @blocco_input.addClass('nascondi')
         @changeModeTo @modo
       else
+        @bandellaFineMode()
         @changeModeTo @modo
         callback = =>
           @changeModeTo('auto')
+          @blocco_input.addClass('nascondi')
         setTimeout callback, @timeouttempo * 1000
 
     insertTimeOutTempo: (time) ->
       @timeouttempo = @timeouttempo + time
       mostra_orologio = new Date(@timeouttempo * 1000).toISOString().substr(11, 8)
       @finetempo.val(mostra_orologio)
-
     manuMode: ->
       @resettaMezzoColore()
       @pulsmanu.addClass('puls-mezzo-acceso')
@@ -107,8 +122,12 @@ $(document).on( "templateinit", (event) ->
       @modo = "on"
       @timeout = 0
       @timeoutapri()
-
-    autoMode: -> @changeModeTo "auto"
+    autoMode: ->
+      @blocco_input.addClass('nascondi')
+      @changeModeTo "auto"
+    boostMode: ->
+      @blocco_input.addClass('nascondi')
+      @changeModeTo "boost"
     setTemp: -> @changeTemperatureTo "#{@inputValue.value()}"
     resettaMezzoColore: ->
       @pulsmanu.removeClass('puls-mezzo-acceso')
@@ -132,21 +151,31 @@ $(document).on( "templateinit", (event) ->
           @pulsmanu.removeClass('ui-btn-active')
           @pulsoff.removeClass('ui-btn-active')
           @pulson.removeClass('ui-btn-active')
+          @pulsboost.removeClass('ui-btn-active')
           @pulsauto.addClass('ui-btn-active')
         when 'manu'
           @pulsmanu.addClass('ui-btn-active')
           @pulsoff.removeClass('ui-btn-active')
           @pulson.removeClass('ui-btn-active')
+          @pulsboost.removeClass('ui-btn-active')
           @pulsauto.removeClass('ui-btn-active')
         when 'off'
           @pulsmanu.removeClass('ui-btn-active')
           @pulsoff.addClass('ui-btn-active')
           @pulson.removeClass('ui-btn-active')
+          @pulsboost.removeClass('ui-btn-active')
           @pulsauto.removeClass('ui-btn-active')
         when 'on'
           @pulsmanu.removeClass('ui-btn-active')
           @pulsoff.removeClass('ui-btn-active')
           @pulson.addClass('ui-btn-active')
+          @pulsboost.removeClass('ui-btn-active')
+          @pulsauto.removeClass('ui-btn-active')
+        when 'boost'
+          @pulsmanu.removeClass('ui-btn-active')
+          @pulsoff.removeClass('ui-btn-active')
+          @pulson.removeClass('ui-btn-active')
+          @pulsboost.addClass('ui-btn-active')
           @pulsauto.removeClass('ui-btn-active')
       return
 
@@ -185,21 +214,51 @@ $(document).on( "templateinit", (event) ->
       today = new Date()
       oggi_ora = today.getHours()
       oggi_minuti = today.getMinutes()
+      # oggi_secondi = today.getSeconds()
       oggi_minuti_corretto = (if oggi_minuti < 10 then "0" else "" )+""+oggi_minuti
                                 #corregge errore dei minuti minori di 10
       pos = Math.round((oggi_ora+(oggi_minuti/60)) * 1000 / 24)/10 #trova la posizione in %
       if pos < 50
         verso = pos
-        allineamento = "right"
+        # allineamento = "right"
       else
         verso = pos - 10
-        allineamento = "left"
+        # allineamento = "left"
+      # orario = oggi_ora + ":" + oggi_minuti_corretto + ":" + oggi_secondi
       orario = oggi_ora + ":" + oggi_minuti_corretto
-      bandellaorario = {ora: orario, posizione: "#{pos}%", verso: "#{verso}%", allineamento: "#{allineamento}"}
-      console.log orario
-      console.log pos
-      console.log bandellaorario
-      return bandellaorario
+      if @interfaccia is 1
+        # @segnaora.css("height", "31px")
+        @segnaora.css("bottom", "40px")
+        @barraora.css("height", "40px")
+      @barraora.css("left", "#{pos}%")
+      @segnaora.css("left", "#{verso}%")
+      @segnaora.html(orario)
+      # @segnaora.css("text-align", "#{allineamento}")
+      return
+
+    bandellaFineMode: ->
+      today = new Date()
+      oggi_ora = today.getHours() * 60
+      minuti_timeout = Math.floor(@timeouttempo / 60)
+      totale_minuti = today.getMinutes() + oggi_ora + minuti_timeout
+      if totale_minuti > 1440
+        totale_minuti = totale_minuti - 1440
+      pos = Math.round(100 / (1440 / totale_minuti) * 10) / 10
+                            #(minuti in un giorno/totale_minuti)
+      if pos < 50
+        verso = pos
+        # allineamento = "right"
+      else
+        verso = pos - 10
+        # allineamento = "left"
+      if @interfaccia is 1
+        @input_segnaora.css("bottom", "25px")
+        @input_barraora.css("height", "25px")
+      @input_barraora.css("left", "#{pos}%")
+      @input_segnaora.css("left", "#{verso}%")
+      @input_segnaora.html(@modo)
+      # @input_segnaora.css("text-align", "#{allineamento}")
+
 
     getConfig: (name) ->
       if @device.config[name]?

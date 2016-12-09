@@ -54,7 +54,7 @@
 #index li.chronothermdevice .globale{
     width: 100%;
     float: left;
-    margin-top: 26px;
+    margin-top: 46px;
 }
 #index li.chronothermdevice .graph {
     position: relative;
@@ -127,22 +127,43 @@
   border-radius: 0 20px 20px 0;
 }
 /*Clock*/
-#index li.cronoaccesospentodevice .segnaorario{
+#index li.chronothermdevice .segnaorario{
   position: absolute;
-  bottom: 125px;
+  bottom: 135px;
   width: 10%;
-  height: 24px;
+  height: 21px;
   text-align: center;
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid rgba(0,128,0,0.5);
   /*border-radius: 10px 10px 10px 0;*/
   font-size: 12px;
 }
-#index li.cronoaccesospentodevice .bandella{
+#index li.chronothermdevice .bandella{
   position: absolute;
   bottom: 0;
   width: 2px;
-  height: 127px;
-  background-color: #ccc;
+  height: 137px;
+  background-color: rgba(0,128,0,0.5);
   /*border: 1px solid #ccc;
   border-bottom: 0;
   border-top: 0;*/
+}
+#index li.chronothermdevice .input-segnaorario{
+    position: absolute;
+    bottom: 123px;
+    width: 10%;
+    height: 20px;
+    text-align: center;
+    border-bottom: 2px solid rgba(255,0,0,0.5);
+    /*border-radius: 10px 10px 10px 0;*/
+    font-size: 12px;
+}
+#index li.chronothermdevice .input-bandella{
+    position: absolute;
+    bottom: 0;
+    width: 2px;
+    height: 125px;
+    background-color: rgba(255,0,0,0.5);
+    /*border: 1px solid #ccc;
+    border-bottom: 0;
+    border-top: 0;*/
+}

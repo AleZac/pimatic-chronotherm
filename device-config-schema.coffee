@@ -34,6 +34,10 @@ module.exports = {
       realtemperature:
         description: "variable with the real temperature"
         type: "string"
+      boost:
+        description: "boost mode"
+        type: "boolean"
+        required: false
       interval:
         description: "time in seconds to refresh the schedule"
         type: "number"
