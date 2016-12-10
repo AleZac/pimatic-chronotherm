@@ -66,8 +66,10 @@ example
 
 I have included the link to 7 variables (cas Ref 1, Ref 2 cas, cas3Ref …) if you need a different schedule for every day of the week.
 You can create only those you use.
+
 ***For those who do not use, the value of its variable must be 0***
 --> here you don't need to add a variable in Pimatic
+
 
 IMPORTANT is that every days of the week must be present in a variable
 See EXAMPLE
