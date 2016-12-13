@@ -83,7 +83,10 @@ See EXAMPLE
 
 ***ontemperature*** is the temperature when you put to ON
 
-***Rule to work with Pimatic***
+***boost*** if you are interested to boost function, add in config.json the line "boost": false.
+A button will appear in the 'interface which, when pressed, will set the "mode" to "boost"
+
+###Rule to work with Pimatic
 
 To set the temperature of you thermostat, you have to set a rule like this:
 ```
