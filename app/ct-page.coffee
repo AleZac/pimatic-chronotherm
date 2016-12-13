@@ -18,7 +18,10 @@ $(document).on( "templateinit", (event) ->
         @interfaccia = @device.config.interface
       else
         @interfaccia = 0
-
+      if @device.config.boost?
+        @boost = 1
+      else
+        @boost = 0
       attribute = @getAttribute("result")
       @tempPresunta = ko.observable attribute.value()
       attribute.value.subscribe (newValue) =>
@@ -36,84 +39,28 @@ $(document).on( "templateinit", (event) ->
       ).extend({ rateLimit: { timeout: 1000, method: "notifyWhenChangesStop" } })
 
       @errore_web = @getAttribute('perweb').value()
-      @modo = "auto"
-
-      # @aggiornaOrario()
-      # console.log @aggiornaOrario()
 
     afterRender: (elements) ->
       super(elements)
 
       @apri = $(elements).find('[name=apri]')
-      @finetempo = $(elements).find('[name=timeoutinput]')
+      # @finetempo = $(elements).find('[name=timeoutinput]')
       @pulsauto = $(elements).find('[name=pulsauto]')
       @pulsmanu = $(elements).find('[name=pulsmanu]')
       @pulson = $(elements).find('[name=pulson]')
+      @pulsboost = $(elements).find('[name=pulsboost]')
       @pulsoff = $(elements).find('[name=pulsoff]')
       @input = $(elements).find('.spinbox input')
       @input.spinbox()
-
       @updateButtons()
       @getAttribute('mode').value.subscribe( => @updateButtons() )
       return
-    timeoutapri: ->
-      @apri.removeClass('nascondi')
-      @timeouttempo = 0
-      @finetempo.val('00:00:00')
-    somma1m: -> @insertTimeOutTempo(60)
-    # somma1m: -> @insertTimeOutTempo(5)
-    somma5m: -> @insertTimeOutTempo(300)
-    somma30m: -> @insertTimeOutTempo(1800)
-    somma1h: -> @insertTimeOutTempo(3600)
-    timeoutalways: ->
-      @finetempo.val('ALWAYS')
-    timeoutreset: ->
-      @timeouttempo = 0
-      @finetempo.val('00:00:00')
-    timeoutcancel: ->
-      @apri.addClass('nascondi')
-      @resettaMezzoColore()
-    timeoutok: ->
-      @resettaMezzoColore()
-      @apri.addClass('nascondi')
-      if @finetempo.val() is "ALWAYS"
-        @changeModeTo @modo
-      else
-        @changeModeTo @modo
-        callback = =>
-          @changeModeTo('auto')
-        setTimeout callback, @timeouttempo * 1000
-
-    insertTimeOutTempo: (time) ->
-      @timeouttempo = @timeouttempo + time
-      mostra_orologio = new Date(@timeouttempo * 1000).toISOString().substr(11, 8)
-      @finetempo.val(mostra_orologio)
-
-    manuMode: ->
-      @resettaMezzoColore()
-      @pulsmanu.addClass('puls-mezzo-acceso')
-      @modo = "manu"
-      @timeout = 0
-      @timeoutapri()
-    offMode: ->
-      @resettaMezzoColore()
-      @pulsoff.addClass('puls-mezzo-acceso')
-      @modo = "off"
-      @timeout = 0
-      @timeoutapri()
-    onMode: ->
-      @resettaMezzoColore()
-      @pulson.addClass('puls-mezzo-acceso')
-      @modo = "on"
-      @timeout = 0
-      @timeoutapri()
-
+    manuMode: -> @changeModeTo "manu"
+    offMode: -> @changeModeTo "off"
+    onMode: -> @changeModeTo "on"
     autoMode: -> @changeModeTo "auto"
+    boostMode: -> @changeModeTo "boost"
     setTemp: -> @changeTemperatureTo "#{@inputValue.value()}"
-    resettaMezzoColore: ->
-      @pulsmanu.removeClass('puls-mezzo-acceso')
-      @pulsoff.removeClass('puls-mezzo-acceso')
-      @pulson.removeClass('puls-mezzo-acceso')
 
     changeModeTo: (mode) ->
       @device.rest.changeModeTo({mode}, global: no)
@@ -132,21 +79,31 @@ $(document).on( "templateinit", (event) ->
           @pulsmanu.removeClass('ui-btn-active')
           @pulsoff.removeClass('ui-btn-active')
           @pulson.removeClass('ui-btn-active')
+          @pulsboost.removeClass('ui-btn-active')
           @pulsauto.addClass('ui-btn-active')
         when 'manu'
           @pulsmanu.addClass('ui-btn-active')
           @pulsoff.removeClass('ui-btn-active')
           @pulson.removeClass('ui-btn-active')
+          @pulsboost.removeClass('ui-btn-active')
           @pulsauto.removeClass('ui-btn-active')
         when 'off'
           @pulsmanu.removeClass('ui-btn-active')
           @pulsoff.addClass('ui-btn-active')
           @pulson.removeClass('ui-btn-active')
+          @pulsboost.removeClass('ui-btn-active')
           @pulsauto.removeClass('ui-btn-active')
         when 'on'
           @pulsmanu.removeClass('ui-btn-active')
           @pulsoff.removeClass('ui-btn-active')
+          @pulsboost.removeClass('ui-btn-active')
           @pulson.addClass('ui-btn-active')
+          @pulsauto.removeClass('ui-btn-active')
+        when 'boost'
+          @pulsmanu.removeClass('ui-btn-active')
+          @pulsoff.removeClass('ui-btn-active')
+          @pulson.removeClass('ui-btn-active')
+          @pulsboost.addClass('ui-btn-active')
           @pulsauto.removeClass('ui-btn-active')
       return
 
@@ -180,26 +137,6 @@ $(document).on( "templateinit", (event) ->
         }
         tabella.push(barra)
       return tabella
-
-    aggiornaOrario : () ->
-      today = new Date()
-      oggi_ora = today.getHours()
-      oggi_minuti = today.getMinutes()
-      oggi_minuti_corretto = (if oggi_minuti < 10 then "0" else "" )+""+oggi_minuti
-                                #corregge errore dei minuti minori di 10
-      pos = Math.round((oggi_ora+(oggi_minuti/60)) * 1000 / 24)/10 #trova la posizione in %
-      if pos < 50
-        verso = pos
-        allineamento = "right"
-      else
-        verso = pos - 10
-        allineamento = "left"
-      orario = oggi_ora + ":" + oggi_minuti_corretto
-      bandellaorario = {ora: orario, posizione: "#{pos}%", verso: "#{verso}%", allineamento: "#{allineamento}"}
-      console.log orario
-      console.log pos
-      console.log bandellaorario
-      return bandellaorario
 
     getConfig: (name) ->
       if @device.config[name]?
