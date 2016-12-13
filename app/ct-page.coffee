@@ -44,7 +44,6 @@ $(document).on( "templateinit", (event) ->
       super(elements)
 
       @apri = $(elements).find('[name=apri]')
-      # @finetempo = $(elements).find('[name=timeoutinput]')
       @pulsauto = $(elements).find('[name=pulsauto]')
       @pulsmanu = $(elements).find('[name=pulsmanu]')
       @pulson = $(elements).find('[name=pulson]')

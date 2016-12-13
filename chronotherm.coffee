@@ -239,7 +239,6 @@ module.exports = (env) ->
       @varManager.cancelNotifyOnChange(cl) for cl in @_exprChangeListeners
       super()
 
-    # requestValue: (autoTemp) ->
     requestValue: () ->
       l01 = @cas1
       l02 = @cas2

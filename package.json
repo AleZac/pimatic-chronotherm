@@ -1,6 +1,6 @@
 {
   "name": "pimatic-chronotherm",
-  "description": "Chrono plugin for weekly schedule",
+  "description": "Chrono plugin for weekly schedule ",
   "author": {
     "name": "Alessandro Zaccaria",
     "url": "https://github.com/AleZac"
