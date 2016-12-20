@@ -83,7 +83,10 @@ See EXAMPLE
 
 ***ontemperature*** is the temperature when you put to ON
 
-***boost*** if you are interested to boost function, add in config.json the line "boost": false.
+***boost*** if you are interested to boost function, add in config.json the line
+```
+"boost": true,
+```
 A button will appear in the 'interface which, when pressed, will set the "mode" to "boost"
 
 ###Rule to work with Pimatic
@@ -111,6 +114,7 @@ when $room.result changes then set temp of Thermostat to $room.result
 ***OFF*** will set the supposed temperature to ***"offtemperature"***
 
 Once click to ***Manu***,***On***,***Off*** It will be asked how long you should be active that function
+Buttons What appear are respectively: add 1 minute, add 5 minutes, add 30 minutes, add 1 hour, add 1 day, add minute to the end of the day and ALWAYS
 
 ###EXAMPLE 1
 ```

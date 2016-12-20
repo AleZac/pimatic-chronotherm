@@ -16,11 +16,37 @@
               <a class="ui-first-child ui-btn ui-corner-all" name="pulsauto" data-bind="click: autoMode">auto</a>
               <a class="ui-btn ui-corner-all" name="pulsmanu" data-bind="click: manuMode">manu</a>
               <a class="ui-btn ui-corner-all" name="pulson" data-bind="click: onMode">on</a>
+              <!-- <a class="ui-btn ui-corner-all" name="pulstime" data-bind="click: timeMode">TIME</a> -->
               <a class="ui-btn ui-corner-all" name="pulsboost" data-bind="visible: boost == 1, click: boostMode">boost</a>
               <a class="ui-last-child ui-btn ui-corner-all" name="pulsoff" data-bind= "click: offMode">off</a>
             </div>
             <div class="spinbox no-carousel-slide">
               <input type="text" data-role="spinbox" name="spin" value="0" min="0" max="100" data-mini="true" step="0.5" data-bind="textInput: inputValue">
+            </div>
+          </div>
+          <div name="apri" class="nascondi">
+            <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
+              <div class="timeoutgruppo ui-controlgroup-controls">
+                <a class="ui-first-child ui-btn ui-corner-all" name="add1m" data-bind="click: somma1m">+1min</a>
+                <a class="ui-btn ui-corner-all" name="add5m" data-bind="click: somma5m">+5min</a>
+                <a class="ui-btn ui-corner-all" name="add30m" data-bind="click: somma30m">+30min</a>
+                <a class="ui-btn ui-corner-all" name="add1h" data-bind="click: somma1h">+1h</a>
+                <a class="ui-btn ui-corner-all" name="add1d" data-bind="click: somma1d">+1d</a>
+                <a class="ui-btn ui-corner-all" name="add1h" data-bind="click: sommaFinoAFineGiornata">EoD</a>
+                <a class="ui-last-child ui-btn ui-corner-all" name="always" data-bind="click: timeoutalways">Always</a>
+              </div>
+              <div class="timeoutgruppo ui-controlgroup-controls">
+                <input class="ui-first-child timeoutinput ui-btn ui-corner-all" name="timeoutinput" value="0" type="text" readonly="readonly">
+                <a class="ui-last-child ui-btn ui-corner-all" name="treset" data-bind="click: timeoutreset">Reset</a>
+              </div>
+              <div class="timeoutgruppo ui-controlgroup-controls">
+                <a class="ui-first-child ui-btn ui-corner-all" name="tcancel" data-bind="click: timeoutcancel">Cancel</a>
+                <a class="ui-last-child ui-btn ui-corner-all" name="tok" data-bind="click: timeoutok">OK</a>
+              </div>
+            </div>
+            <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
+              <div class="ui-controlgroup-controls">
+              </div>
             </div>
           </div>
         </div>
@@ -32,6 +58,12 @@
               <span data-bind="text: temperatura"></span>
             </div>
           </div>
+          <div name="apri_blocco_input" data-bind="visible: timeturnam()">
+            <div class="input-bandella-orario" name="input_barra_orario"></div>
+            <div class="input-segna-orario" name="input_segna_orario"></div>
+          </div>
+          <div class="bandella-orario" name="bandella_orario"></div>
+          <div class="segna-orario" name="segna_orario"></div>
         </div>
         <div class="orari" data-bind="visible: errore_web != 0">
           <div data-bind="foreach: $data.paginaweb()">
@@ -55,6 +87,31 @@
               <a class="ui-last-child ui-btn ui-corner-all" name="pulsoff" data-bind= "click: offMode">off</a>
             </div>
           </div>
+          <div class="nascondi" name="apri">
+            <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
+              <div class="timeoutgruppo ui-controlgroup-controls">
+                <a class="ui-first-child ui-btn ui-corner-all" name="add1m" data-bind="click: somma1m">+1min</a>
+                <a class="ui-btn ui-corner-all" name="add5m" data-bind="click: somma5m">+5min</a>
+                <a class="ui-btn ui-corner-all" name="add30m" data-bind="click: somma30m">+30min</a>
+                <a class="ui-btn ui-corner-all" name="add1h" data-bind="click: somma1h">+1h</a>
+                <a class="ui-btn ui-corner-all" name="add1d" data-bind="click: somma1d">+1d</a>
+                <a class="ui-btn ui-corner-all" name="add1h" data-bind="click: sommaFinoAFineGiornata">EoD</a>
+                <a class="ui-last-child ui-btn ui-corner-all" name="always" data-bind="click: timeoutalways">Always</a>
+              </div>
+              <div class="timeoutgruppo ui-controlgroup-controls">
+                <input class="ui-first-child timeoutinput ui-btn ui-corner-all" name="timeoutinput" value="0" type="text" readonly="readonly">
+                <a class="ui-last-child ui-btn ui-corner-all" name="treset" data-bind="click: timeoutreset">Reset</a>
+              </div>
+              <div class="timeoutgruppo ui-controlgroup-controls">
+                <a class="ui-first-child ui-btn ui-corner-all" name="tcancel" data-bind="click: timeoutcancel">Cancel</a>
+                <a class="ui-last-child ui-btn ui-corner-all" name="tok" data-bind="click: timeoutok">OK</a>
+              </div>
+            </div>
+            <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
+              <div class="ui-controlgroup-controls">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="globale">
@@ -63,6 +120,12 @@
             <div class="bar1" data-bind="style: {backgroundColor: colore, width: larghezza, left: posizione}">
             </div>
           </div>
+          <div name="apri_blocco_input" data-bind="visible: timeturnam()">
+            <div class="input-bandella-orario" name="input_barra_orario"></div>
+            <div class="input-segna-orario" name="input_segna_orario"></div>
+          </div>
+          <div class="bandella-orario" name="bandella_orario"></div>
+          <div class="segna-orario" name="segna_orario"></div>
         </div>
         <div class="orari">
           <div data-bind="foreach: $data.paginaweb()">

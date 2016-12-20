@@ -18,6 +18,7 @@
     "cas5Ref": "$giorno5",
     "cas6Ref": "$giorno6",
     "cas7Ref": "$giorno7",
+    "boost": true,
     "realtemperature": "$realtemperature",
     "interval": 240,
     "offtemperature": 4,

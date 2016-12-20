@@ -85,7 +85,15 @@ module.exports = (env) ->
       perweb:
         description: "perweb"
         type: "string"
-
+      mintoautomode:
+        description: "minute to turn to automode"
+        type: "number"
+      time:
+        description: "current time and date"
+        type: "number"
+      timeturnam:
+        description: "time to turn to automode"
+        type: "number"
     actions:
       changeModeTo:
         params:
@@ -99,7 +107,10 @@ module.exports = (env) ->
         params:
           autoTemp:
             type: "number"
-
+      changeMinToAutoModeTo:
+        params:
+          mintoautomode:
+            type: "number"
     template: "ChronoThermDevice"
 
     constructor: (@config, lastState) ->
@@ -118,6 +129,12 @@ module.exports = (env) ->
       @setMode(lastState?.mode?.value or "auto")
       @intattivo = 0
       @setManuTemp(lastState?.manuTemp?.value or 20)
+      @timeturnam = lastState?.timeturnam?.value
+      if @timeturnam? and @timeturnam isnt 0
+        @timeturnam = new Date(@timeturnam)
+      else
+        @timeturnam = 0
+      @mintoautomode = 0
       if @config.interface?
         @interfaccia = @config.interface
       else
@@ -167,7 +184,10 @@ module.exports = (env) ->
       super()
 
       @errore_giorni()
-
+      @aggiornaTempo()
+      @girotempo = setInterval ( =>
+        @aggiornaTempo() #giro aggiorna orario
+        ), 1000 * @config.interval
     errori: (name, val) ->
       if @intattivo is 1
         clearTimeout @intervalId
@@ -193,7 +213,6 @@ module.exports = (env) ->
         val = 0
       @_setAttribute name, val
       @errore_giorni()
-
     errore_giorni: () ->
       acas1 = @cas1.toString().split(',')
       acas2 = @cas2.toString().split(',')
@@ -224,7 +243,6 @@ module.exports = (env) ->
         @intattivo = 1
         @requestValue()
         ), @config.interval * 1000
-
     ciclo_errore_giorni: () ->
       zero = 0
       clearTimeout @intervalId
@@ -235,10 +253,23 @@ module.exports = (env) ->
       @emit "perweb", zero
       return Promise.resolve()
 
+    aggiornaTempo: () ->
+      now = new Date()
+      @time = now
+      if @timeturnam is 0
+        @emit "time", @time
+        return Promise.resolve()
+      if @time > @timeturnam
+        @timeturnam = 0
+        @emit "timeturnam", @timeturnam
+        @changeModeTo "auto"
+      else
+      @emit "time", @time
+      return Promise.resolve()
+
     destroy: () ->
       @varManager.cancelNotifyOnChange(cl) for cl in @_exprChangeListeners
       super()
-
     requestValue: () ->
       l01 = @cas1
       l02 = @cas2
@@ -285,7 +316,6 @@ module.exports = (env) ->
       @emit "result", @result
       @emit "perweb", array01
       return Promise.resolve()
-
     trova_giorno: (giornods, array01) ->
       array01 = array01.toString().split(',') # trasforma variabile in un array di numeri
                                               # transform string to array
@@ -295,16 +325,16 @@ module.exports = (env) ->
       array_dei_numeri = array_dei_giorni.map(Number) # trasforma la stringa di array in un array di numeri
       if giornods in array_dei_numeri   # transform the string of day to a new array
         return array01
-
     _setAttribute: (attributeName, value) ->
       if @[attributeName] isnt value
         @[attributeName] = value
         @emit attributeName, value
-
     setMode: (mode) ->
       if mode is @_mode then return
       switch mode
         when 'auto'
+          @timeturnam = 0
+          @emit "timeturnam", @timeturnam
           @result = @_autoTemp
           @emit "result", @result
         when 'manu'
@@ -328,7 +358,6 @@ module.exports = (env) ->
       @_mode = mode
       @emit "mode", @_mode
       return Promise.resolve()
-
     setManuTemp: (manuTemp) ->
       if manuTemp is @_manuTemp then return
       @_manuTemp = manuTemp
@@ -338,14 +367,27 @@ module.exports = (env) ->
       @emit "manuTemp", @_manuTemp
       return Promise.resolve()
 
+    setMinToAutoModeTo: (mintoautomode) ->
+      if mintoautomode is 0
+        @timeturnam = 0
+      else
+        @timeturnam = new Date(@time.getTime() + mintoautomode * 60 * 1000)
+        @mintoautomode = mintoautomode
+      @emit "mintoautomode", @mintoautomode
+      @emit "timeturnam", @timeturnam
+      return Promise.resolve()
+
     # Actions : called from UI & rules
     changeModeTo: (mode) ->
       @setMode(mode)
       return Promise.resolve()
-
     changeTemperatureTo: (manuTemp) ->
       @setMode('manu')
       @setManuTemp(manuTemp)
+      return Promise.resolve()
+
+    changeMinToAutoModeTo: (mintoautomode) ->
+      @setMinToAutoModeTo(mintoautomode)
       return Promise.resolve()
 
     getManuTemp: () ->  Promise.resolve(@_manuTemp)
@@ -354,6 +396,9 @@ module.exports = (env) ->
     getPerweb: () -> Promise.resolve(@perweb)
     getResult: () -> Promise.resolve(@result)
     getRealTemperature: () -> Promise.resolve(@realtemperature)
+    getMintoautomode: () -> Promise.resolve(@mintoautomode)
+    getTimeturnam: () -> Promise.resolve(@timeturnam)
+    getTime: () -> Promise.resolve(@time)
     getCas1: () -> Promise.resolve(@cas1)
     getCas2: () -> Promise.resolve(@cas2)
     getCas3: () -> Promise.resolve(@cas3)
