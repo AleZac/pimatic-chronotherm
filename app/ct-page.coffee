@@ -50,7 +50,6 @@ $(document).on( "templateinit", (event) ->
     afterRender: (elements) ->
       super(elements)
 
-      # @aprichiudiprogram = $(elements).find('[name=aprichiudiprogram]')
       @zonaprogram = $(elements).find('[name=zonaprogram]')
       @aprichiudiprogramo = $(elements).find('[name=aprichiudiprogramo]')
       @aprichiudiprogramc = $(elements).find('[name=aprichiudiprogramc]')
@@ -65,23 +64,19 @@ $(document).on( "templateinit", (event) ->
       @segna_orario = $(elements).find('[name=segna_orario]')
       @input_barra_orario = $(elements).find('[name=input_barra_orario]')
       @input_segna_orario = $(elements).find('[name=input_segna_orario]')
-      # @apri_blocco_input = $(elements).find('[name=apri_blocco_input]')
       @input = $(elements).find('.spinbox input')
       @input.spinbox()
       @updateButtons()
       @orarioBarra()
       @getAttribute('mode').value.subscribe( => @updateButtons() )
-
       @fineAutoMode()
 
       return
     showProgramO: ->
-      console.log "PROVA"
       @zonaprogram.removeClass('nascondi')
       @aprichiudiprogramc.removeClass('nascondi')
       @aprichiudiprogramo.addClass('nascondi')
     showProgramC: ->
-      console.log "PROVA"
       @zonaprogram.addClass('nascondi')
       @aprichiudiprogramc.addClass('nascondi')
       @aprichiudiprogramo.removeClass('nascondi')
@@ -90,26 +85,20 @@ $(document).on( "templateinit", (event) ->
       @pulsmanu.addClass('puls-mezzo-acceso')
       @modo = "manu"
       @timeoutapri()
-      # @changeModeTo "manu"
-
     offMode: ->
       @resettaMezzoColore()
       @pulsoff.addClass('puls-mezzo-acceso')
       @modo = "off"
       @timeoutapri()
-      # @changeModeTo "off"
     onMode: ->
       @resettaMezzoColore()
       @pulson.addClass('puls-mezzo-acceso')
       @modo = "on"
       @timeoutapri()
-      # @changeModeTo "on"
     autoMode: ->
-      # @visibletimeturnam = 0
       @changeModeTo "auto"
     boostMode: -> @changeModeTo "boost"
     setTemp: -> @changeTemperatureTo "#{@inputValue.value()}"
-
 
     timeoutapri: ->
       @apri.removeClass('nascondi')
@@ -142,14 +131,10 @@ $(document).on( "templateinit", (event) ->
       @apri.addClass('nascondi')
       @resettaMezzoColore()
     timeoutok: ->
-      console.log @aggiungiminuti, " --@aggiungiminuti"
-      # @visibletimeturnam = 1
-
       @resettaMezzoColore() #remove green button
       @apri.addClass('nascondi') #hide timeout select interface
       if @finetempo.val() is "ALWAYS"
         @changeModeTo @modo
-        console.log "Cambiato in ",@modo
       else
         if @aggiungiminuti is 0
           @changeModeTo 'auto'
@@ -157,7 +142,6 @@ $(document).on( "templateinit", (event) ->
           @changeModeTo @modo
           @changeMinToAutoModeTo(@aggiungiminuti)
           setTimeout (=> @fineAutoMode()) , 1000 #delay
-
 
     orarioBarra: ->
       pos = @calcolaPos(@time.value())
@@ -173,9 +157,7 @@ $(document).on( "templateinit", (event) ->
       tempo_esatto = @formattaTempo(@time.value())
       @segna_orario.html(tempo_esatto)
     fineAutoMode: ->
-      # turnam = @getAttribute('timeturnam').value()
       turnam = @timeturnam()
-      # console.log turnam, "TURNAM"
       pos = @calcolaPos(turnam)
       if pos < 50
         verso = pos
@@ -192,7 +174,6 @@ $(document).on( "templateinit", (event) ->
     formattaTempo: (tempo) ->
       # date = tempo.value()
       today = new Date(tempo)
-      # console.log today, "TODAY"
       tempo_format =
         ("0" + today.getDate())[-2..] + "/" +
         ("0" + (today.getMonth()+1))[-2..]  + "/" +
@@ -217,8 +198,6 @@ $(document).on( "templateinit", (event) ->
       @pulsmanu.removeClass('puls-mezzo-acceso')
       @pulsoff.removeClass('puls-mezzo-acceso')
       @pulson.removeClass('puls-mezzo-acceso')
-
-
     changeModeTo: (mode) ->
       @device.rest.changeModeTo({mode}, global: no)
         .done(ajaxShowToast)
@@ -265,7 +244,6 @@ $(document).on( "templateinit", (event) ->
           @pulsboost.addClass('ui-btn-active')
           @pulsauto.removeClass('ui-btn-active')
       return
-
     paginaweb: () ->
       uuu = @getAttribute('perweb').value()
       if uuu is 0
@@ -296,7 +274,6 @@ $(document).on( "templateinit", (event) ->
         }
         tabella.push(barra)
       return tabella
-
     getConfig: (name) ->
       if @device.config[name]?
         return @device.config[name]

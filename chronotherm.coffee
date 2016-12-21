@@ -25,7 +25,6 @@ module.exports = (env) ->
         else
           env.logger.warn "your plugin could not find the mobile-frontend. No gui will be available"
 
-
   class ChronoThermDevice extends env.devices.Device
 
     cas1: 0

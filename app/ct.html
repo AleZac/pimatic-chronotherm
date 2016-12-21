@@ -3,17 +3,10 @@
     <label data-bind="text: name, tooltip: $data.labelTooltipHtml" class="device-label"></label>
     <div class="errore_web" data-bind="visible: errore_web == 0">ERROR - You have entered a wrong variable/s</div>
     <div class="interfaccia0" data-bind="visible: interfaccia == 0">
-
       <div class="pulsanti" data-bind="visible: errore_web != 0">
         <div class="controls">
-
-
-
-
           <a class="aprichiudiprogram ui-icon-plus ui-btn ui-btn-icon-notext" name="aprichiudiprogramo" data-bind="click: showProgramO"></a>
           <a class="nascondi aprichiudiprogram ui-icon-minus ui-btn ui-btn-icon-notext" name="aprichiudiprogramc" data-bind="click: showProgramC"></a>
-
-
           <div class="ui-controlgroup box-gradi-tondo tempEffettiva">
             <span data-bind="text: tempEffettiva"></span><span>°</span>
           </div>
@@ -85,6 +78,8 @@
     <div class="interfaccia1" data-bind="visible: interfaccia == 1">
       <div class="pulsanti">
         <div class="controls">
+          <a class="aprichiudiprogram ui-icon-plus ui-btn ui-btn-icon-notext" name="aprichiudiprogramo" data-bind="click: showProgramO"></a>
+          <a class="nascondi aprichiudiprogram ui-icon-minus ui-btn ui-btn-icon-notext" name="aprichiudiprogramc" data-bind="click: showProgramC"></a>
           <div class="ui-controlgroup box-gradi-tondo tempPresunta ui-bar-a" data-bind="style:{background: tempPresunta() == 1 ? 'green' : 'red' }">
             <span data-bind="text: tempPresunta() == 1 ? 'ON' : 'OFF'"></span>
           </div>
