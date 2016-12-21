@@ -47,10 +47,13 @@ $(document).on( "templateinit", (event) ->
 
       @errore_web = @getAttribute('perweb').value()
       @modo = "auto"
-
     afterRender: (elements) ->
       super(elements)
 
+      # @aprichiudiprogram = $(elements).find('[name=aprichiudiprogram]')
+      @zonaprogram = $(elements).find('[name=zonaprogram]')
+      @aprichiudiprogramo = $(elements).find('[name=aprichiudiprogramo]')
+      @aprichiudiprogramc = $(elements).find('[name=aprichiudiprogramc]')
       @apri = $(elements).find('[name=apri]')
       @finetempo = $(elements).find('[name=timeoutinput]')
       @pulsauto = $(elements).find('[name=pulsauto]')
@@ -72,7 +75,16 @@ $(document).on( "templateinit", (event) ->
       @fineAutoMode()
 
       return
-
+    showProgramO: ->
+      console.log "PROVA"
+      @zonaprogram.removeClass('nascondi')
+      @aprichiudiprogramc.removeClass('nascondi')
+      @aprichiudiprogramo.addClass('nascondi')
+    showProgramC: ->
+      console.log "PROVA"
+      @zonaprogram.addClass('nascondi')
+      @aprichiudiprogramc.addClass('nascondi')
+      @aprichiudiprogramo.removeClass('nascondi')
     manuMode: ->
       @resettaMezzoColore()
       @pulsmanu.addClass('puls-mezzo-acceso')

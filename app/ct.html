@@ -3,8 +3,17 @@
     <label data-bind="text: name, tooltip: $data.labelTooltipHtml" class="device-label"></label>
     <div class="errore_web" data-bind="visible: errore_web == 0">ERROR - You have entered a wrong variable/s</div>
     <div class="interfaccia0" data-bind="visible: interfaccia == 0">
+
       <div class="pulsanti" data-bind="visible: errore_web != 0">
         <div class="controls">
+
+
+
+
+          <a class="aprichiudiprogram ui-icon-plus ui-btn ui-btn-icon-notext" name="aprichiudiprogramo" data-bind="click: showProgramO"></a>
+          <a class="nascondi aprichiudiprogram ui-icon-minus ui-btn ui-btn-icon-notext" name="aprichiudiprogramc" data-bind="click: showProgramC"></a>
+
+
           <div class="ui-controlgroup box-gradi-tondo tempEffettiva">
             <span data-bind="text: tempEffettiva"></span><span>°</span>
           </div>
@@ -16,7 +25,6 @@
               <a class="ui-first-child ui-btn ui-corner-all" name="pulsauto" data-bind="click: autoMode">auto</a>
               <a class="ui-btn ui-corner-all" name="pulsmanu" data-bind="click: manuMode">manu</a>
               <a class="ui-btn ui-corner-all" name="pulson" data-bind="click: onMode">on</a>
-              <!-- <a class="ui-btn ui-corner-all" name="pulstime" data-bind="click: timeMode">TIME</a> -->
               <a class="ui-btn ui-corner-all" name="pulsboost" data-bind="visible: boost == 1, click: boostMode">boost</a>
               <a class="ui-last-child ui-btn ui-corner-all" name="pulsoff" data-bind= "click: offMode">off</a>
             </div>
@@ -51,7 +59,7 @@
           </div>
         </div>
       </div>
-      <div class="globale">
+      <div class="nascondi globale" name="zonaprogram">
         <div class="graph" data-bind="visible: errore_web != 0">
           <div data-bind="foreach: $data.paginaweb()">
             <div class="bar" data-bind="style: {width: larghezza, height: altezza, left: posizione}">

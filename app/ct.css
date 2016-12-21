@@ -11,6 +11,22 @@
   font-weight: bold;
 }
 /*PULSANTI*/
+#index li.chronothermdevice .aprichiudiprogram{
+  position: absolute;
+  top: 35px;
+  left: 10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background-color: green;
+}
+#index li.chronothermdevice .aprichiudiprogram:after{
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+}
 #index li.chronothermdevice .box-gradi-tondo{
   border: 1px solid #ddd;
   color: white;

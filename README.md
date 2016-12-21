@@ -101,6 +101,8 @@ when $room.result changes then set temp of Thermostat to $room.result
 
 ###WEB INTERFACE
 
+***Plus Button*** open graph interface
+
 ***The green circle*** indicates the actual temperature detected
 
 ***The blue circle*** indicates the supposed temperature programming
