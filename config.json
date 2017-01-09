@@ -23,5 +23,6 @@
     "interval": 240,
     "offtemperature": 4,
     "ontemperature": 21
+    "valve": "$rele"
   }
 ]

@@ -11,7 +11,7 @@ module.exports = (env) ->
 
       @framework.deviceManager.registerDeviceClass("ChronoThermDevice", {
         configDef: deviceConfigDef.ChronoThermDevice,
-        createCallback: (config, lastState) =>
+        createCallback: (config, lastState, framework) ->
           return new ChronoThermDevice(config, lastState)
       })
       # wait till all plugins are loaded
@@ -93,6 +93,10 @@ module.exports = (env) ->
       timeturnam:
         description: "time to turn to automode"
         type: "number"
+      # valve:
+      #   description: "name of the variable that enable valve"
+      #   type: "string"
+
     actions:
       changeModeTo:
         params:
@@ -112,7 +116,7 @@ module.exports = (env) ->
             type: "number"
     template: "ChronoThermDevice"
 
-    constructor: (@config, lastState) ->
+    constructor: (@config, lastState, framework) ->
       @id = @config.id
       @name = @config.name
       @cas1 = lastState?.cas1?.value or 0
@@ -180,6 +184,19 @@ module.exports = (env) ->
             )
           )
           @_createGetter(name, evaluate)
+
+
+
+
+      # console.log @config.valve," <-----------"
+      # @vars = @framework.variableManager
+      # if @config.valve?
+      #   variable = framework.variableManager.getVariableByName(@config.valve)
+      # @framework.variableManager.setVariableToValue(@config.valve, true, variable.unit)
+
+
+
+
       super()
 
       @errore_giorni()
@@ -253,6 +270,10 @@ module.exports = (env) ->
       return Promise.resolve()
 
     aggiornaTempo: () ->
+      # console.log "QUI"
+      # if @config.valve isnt false
+      #   console.log "VALVE ESISTE"
+      #   @setValve() #set valve to true or false
       now = new Date()
       @time = now
       if @timeturnam is 0
@@ -265,6 +286,22 @@ module.exports = (env) ->
       else
       @emit "time", @time
       return Promise.resolve()
+
+    # setValve:() ->
+    #   if @result < @realtemperature
+    #     value = true
+    #   else
+    #     value = false
+    #   console.log value, "<-- VALUE"
+    #   name = @config.valve
+    #   console.log name, "<-- NAME"
+    #   variable = @varManager.getVariableByName(name)
+    #   unless variable?
+    #     throw new Error("Could not find variable with name #{name}")
+    #   console.log variable, "<---- VARIABLE"
+    #   @varManager.setVariableToValue(name, value)
+    #   console.log "<---- OK---->"
+    #   return Promise.resolve()
 
     destroy: () ->
       @varManager.cancelNotifyOnChange(cl) for cl in @_exprChangeListeners
@@ -381,7 +418,7 @@ module.exports = (env) ->
       @setMode(mode)
       return Promise.resolve()
     changeTemperatureTo: (manuTemp) ->
-      @setMode('manu')
+      # @setMode('manu')
       @setManuTemp(manuTemp)
       return Promise.resolve()
 
@@ -405,6 +442,6 @@ module.exports = (env) ->
     getCas5: () -> Promise.resolve(@cas5)
     getCas6: () -> Promise.resolve(@cas6)
     getCas7: () -> Promise.resolve(@cas7)
-
+    # getValve: () -> Promise.resolve(@valve)
   plugin = new ChronoThermPlugin
   return plugin

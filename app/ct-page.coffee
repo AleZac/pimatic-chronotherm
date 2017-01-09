@@ -4,19 +4,48 @@ $(document).on( "templateinit", (event) ->
     constructor: (templData, @device) ->
       super(templData, @device)
 
-      @time = @getAttribute('time')
+      @attributetime = @getAttribute('time')
+      @time_pos = ko.observable(@calcolaPos(@getAttribute('time').value()))
+      @time_verso = @time_pos()
+      if @time_pos() < 50
+        @time_verso = ko.observable(@calcolaPos(@getAttribute('time').value()))
+      else
+        @time_verso = ko.observable((@calcolaPos(@getAttribute('time').value()))- 25)
+      @time = ko.observable @attributetime.value()
+      @time_orario = ko.observable @formattaTempo(@time())
+      @attributetime.value.subscribe (newValue) =>
+        @time newValue
+        @time_orario @formattaTempo(@time())
+        @time_pos @calcolaPos(@getAttribute('time').value())
+        if @time_pos() < 50
+          @time_verso @calcolaPos(@getAttribute('time').value())
+        else
+          @time_verso @calcolaPos(@getAttribute('time').value()) - 25
+
 
       attributeturnam = @getAttribute('timeturnam')
+      @timeout_pos = ko.observable(@calcolaPos(@getAttribute('timeturnam').value()))
+      @timeout_verso = @timeout_pos()
+      if @timeout_pos() < 50
+        @timeout_verso = ko.observable(@calcolaPos(@getAttribute('timeturnam').value()))
+      else
+        @timeout_verso = ko.observable((@calcolaPos(@getAttribute('timeturnam').value()))- 25)
       @timeturnam = ko.observable attributeturnam.value()
+      @timeout_orario = ko.observable @formattaTempo(@timeturnam())
       attributeturnam.value.subscribe (newValue) =>
         @timeturnam newValue
+        @timeout_orario @formattaTempo(@timeturnam())
+        @timeout_pos @calcolaPos(@getAttribute('timeturnam').value())
+        if @timeout_pos() < 50
+          @timeout_verso @calcolaPos(@getAttribute('timeturnam').value())
+        else
+          @timeout_verso @calcolaPos(@getAttribute('timeturnam').value()) - 25
 
       @inputValue = ko.observable()
       @stAttr = @getAttribute('manuTemp')
       @inputValue(@stAttr.value())
 
       attrValue = @stAttr.value()
-
       @stAttr.value.subscribe( (value) =>
         @inputValue(value)
         attrValue = value
@@ -47,6 +76,7 @@ $(document).on( "templateinit", (event) ->
 
       @errore_web = @getAttribute('perweb').value()
       @modo = "auto"
+
     afterRender: (elements) ->
       super(elements)
 
@@ -60,16 +90,17 @@ $(document).on( "templateinit", (event) ->
       @pulson = $(elements).find('[name=pulson]')
       @pulsboost = $(elements).find('[name=pulsboost]')
       @pulsoff = $(elements).find('[name=pulsoff]')
-      @bandella_orario = $(elements).find('[name=bandella_orario]')
+      # @bandella_orario = $(elements).find('[name=bandella_orario]')
       @segna_orario = $(elements).find('[name=segna_orario]')
       @input_barra_orario = $(elements).find('[name=input_barra_orario]')
       @input_segna_orario = $(elements).find('[name=input_segna_orario]')
       @input = $(elements).find('.spinbox input')
       @input.spinbox()
       @updateButtons()
-      @orarioBarra()
+      # @orarioBarra()
       @getAttribute('mode').value.subscribe( => @updateButtons() )
-      @fineAutoMode()
+      # @fineAutoMode()
+      console.log "AFTER RENDER"
 
       return
     showProgramO: ->
@@ -103,7 +134,7 @@ $(document).on( "templateinit", (event) ->
     timeoutapri: ->
       @apri.removeClass('nascondi')
       @changeMinToAutoModeTo(0) #azzera conteggio minuti
-      @importatempo = new Date(@time.value())
+      @importatempo = new Date(@attributetime.value())
       tempo_format = @formattaTempo(@importatempo)
       @finetempo.val(tempo_format)
       @aggiungiminuti = 0 #resetta conteggio minuti aggiunti
@@ -123,7 +154,7 @@ $(document).on( "templateinit", (event) ->
       @aggiungiminuti = 0 #resetta conteggio minuti aggiunti
       @finetempo.val('ALWAYS')
     timeoutreset: ->
-      @importatempo = new Date(@time.value())
+      @importatempo = new Date(@attributetime.value())
       tempo_format = @formattaTempo(@importatempo)
       @finetempo.val(tempo_format)
       @aggiungiminuti = 0 #resetta conteggio minuti aggiunti
@@ -141,36 +172,36 @@ $(document).on( "templateinit", (event) ->
         else
           @changeModeTo @modo
           @changeMinToAutoModeTo(@aggiungiminuti)
-          setTimeout (=> @fineAutoMode()) , 1000 #delay
+          # setTimeout (=> @fineAutoMode()) , 2000 #delay
 
-    orarioBarra: ->
-      pos = @calcolaPos(@time.value())
-      if pos < 50
-        verso = pos
-      else
-        verso = pos - 25
-      if @interfaccia is 1
-        @segna_orario.css("bottom", "40px")
-        @bandella_orario.css("height", "40px")
-      @bandella_orario.css("left", "#{pos}%")
-      @segna_orario.css("left", "#{verso}%")
-      tempo_esatto = @formattaTempo(@time.value())
-      @segna_orario.html(tempo_esatto)
-    fineAutoMode: ->
-      turnam = @timeturnam()
-      pos = @calcolaPos(turnam)
-      if pos < 50
-        verso = pos
-      else
-        verso = pos - 25
-      if @interfaccia is 1
-        @input_segna_orario.css("bottom", "25px")
-        @input_barra_orario.css("height", "25px")
-      @input_barra_orario.css("left", "#{pos}%")
-      @input_segna_orario.css("left", "#{verso}%")
-      tempo_esatto = @formattaTempo(turnam)
-      @input_segna_orario.html(tempo_esatto)
-      # @apri_blocco_input.removeClass('nascondi')
+    # orarioBarra: ->
+    #   pos = @calcolaPos(@time.value())
+    #   if pos < 50
+    #     verso = pos
+    #   else
+    #     verso = pos - 25
+    #   if @interfaccia is 1
+    #     @segna_orario.css("bottom", "40px")
+    #   #   @bandella_orario.css("height", "40px")
+    #   # @bandella_orario.css("left", "#{pos}%")
+    #   @segna_orario.css("left", "#{verso}%")
+    #   tempo_esatto = @formattaTempo(@time.value())
+    #   @segna_orario.html(tempo_esatto)
+    # fineAutoMode: ->
+    #   turnam = @timeturnam()
+    #   console.log turnam,"<--TURNAM"
+    #   pos = @calcolaPos(turnam)
+    #   if pos < 50
+    #     verso = pos
+    #   else
+    #     verso = pos - 25
+    #   if @interfaccia is 1
+    #     @input_segna_orario.css("bottom", "25px")
+    #     @input_barra_orario.css("height", "25px")
+    #   @input_barra_orario.css("left", "#{pos}%")
+    #   @input_segna_orario.css("left", "#{verso}%")
+    #   tempo_esatto = @formattaTempo(turnam)
+    #   @input_segna_orario.html(tempo_esatto)
     formattaTempo: (tempo) ->
       # date = tempo.value()
       today = new Date(tempo)
@@ -180,7 +211,12 @@ $(document).on( "templateinit", (event) ->
         today.getFullYear() + "  " +
         ("0" + today.getHours())[-2..] + ":" +
         ("0" + today.getMinutes())[-2..]
+      console.log tempo, "TTTTTTTTT"
       return tempo_format
+
+
+
+
     calcolaPos: (tempo) ->
       today = new Date(tempo)
       oggi_ora = today.getHours() * 60
@@ -188,7 +224,13 @@ $(document).on( "templateinit", (event) ->
       totale_minuti = Math.floor(totale_minuti % 1440)
       pos = Math.round(100 / (1440 / totale_minuti) * 10) / 10
                             #(minuti in un giorno/totale_minuti)
+
       return pos
+
+
+
+
+
     aggiungitempo: (minuti) ->
       @importatempo.setTime(@importatempo.getTime() + (minuti * 60 * 1000))
       @aggiungiminuti = @aggiungiminuti + minuti

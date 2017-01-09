@@ -47,5 +47,9 @@ module.exports = {
       ontemperature:
         description: "the temperature for the on button"
         type: "number"
+      # valve:
+      #   description: "name of the variable that enable valve"
+      #   type: "string"
+      #   required: false
   }
 }

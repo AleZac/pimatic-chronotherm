@@ -175,3 +175,16 @@
     height: 122px;
     background-color: rgba(255,0,0,0.5);
   }
+/*Clock - Light*/
+  #index li.chronothermdevice .inputb-light{
+    height: 25px;
+  }
+  #index li.chronothermdevice .inputs-light{
+    bottom: 25px;
+  }
+  #index li.chronothermdevice .bandella-light{
+    height: 40px;
+  }
+  #index li.chronothermdevice .segna-light{
+    bottom: 40px;
+  }

@@ -59,12 +59,12 @@
               <span data-bind="text: temperatura"></span>
             </div>
           </div>
-          <div name="apri_blocco_input" data-bind="visible: timeturnam()">
-            <div class="input-bandella-orario" name="input_barra_orario"></div>
-            <div class="input-segna-orario" name="input_segna_orario"></div>
+          <div data-bind="visible: timeturnam()">
+            <div class="input-bandella-orario" data-bind="style: {left: timeout_pos() + '%'}"></div>
+            <div class="input-segna-orario" data-bind="text: timeout_orario, style: {left: timeout_verso() + '%'}"></div>
           </div>
-          <div class="bandella-orario" name="bandella_orario"></div>
-          <div class="segna-orario" name="segna_orario"></div>
+          <div class="bandella-orario" data-bind="style: {left: time_pos() + '%'}"></div>
+          <div class="segna-orario" data-bind="text: time_orario, style: {left: time_verso() + '%'}"></div>
         </div>
         <div class="orari" data-bind="visible: errore_web != 0">
           <div data-bind="foreach: $data.paginaweb()">
@@ -123,12 +123,12 @@
             <div class="bar1" data-bind="style: {backgroundColor: colore, width: larghezza, left: posizione}">
             </div>
           </div>
-          <div name="apri_blocco_input" data-bind="visible: timeturnam()">
-            <div class="input-bandella-orario" name="input_barra_orario"></div>
-            <div class="input-segna-orario" name="input_segna_orario"></div>
+          <div data-bind="visible: timeturnam()">
+            <div class="input-bandella-orario inputb-light" data-bind="style: {left: timeout_pos() + '%'}"></div>
+            <div class="input-segna-orario inputs-light" data-bind="text: timeout_orario, style: {left: timeout_verso() + '%'}"></div>
           </div>
-          <div class="bandella-orario" name="bandella_orario"></div>
-          <div class="segna-orario" name="segna_orario"></div>
+          <div class="bandella-orario bandella-light" data-bind="style: {left: time_pos() + '%'}"></div>
+          <div class="segna-orario segna-light" data-bind="text: time_orario, style: {left: time_verso() + '%'}"></div>
         </div>
         <div class="orari">
           <div data-bind="foreach: $data.paginaweb()">
