@@ -10,8 +10,10 @@
           <div class="ui-controlgroup box-gradi-tondo tempEffettiva">
             <span data-bind="text: tempEffettiva"></span><span>°</span>
           </div>
-          <div class="ui-controlgroup box-gradi-tondo tempPresunta ui-bar-a">
-            <span data-bind="text: tempPresunta"></span><span>°</span>
+          <div class="ui-controlgroup box-gradi-tondo tempPresunta ui-bar-a" data-bind="style:{background: valve() == true ? 'green' : 'white' }">
+            <div class="inttempPresunta ui-bar-a">
+              <span data-bind="text: tempPresunta"></span><span>°</span>
+            </div>
           </div>
           <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
             <div class="ui-controlgroup-controls">
@@ -23,6 +25,9 @@
             </div>
             <div class="spinbox no-carousel-slide">
               <input type="text" data-role="spinbox" name="spin" value="0" min="0" max="100" data-mini="true" step="0.5" data-bind="textInput: inputValue">
+            </div>
+            <div class="stagione" data-bind="visible: showseason == 1">
+              <a name="pulsseason" data-bind="text: season(), click: seasonMode"></a>
             </div>
           </div>
           <div name="apri" class="nascondi">
@@ -80,7 +85,7 @@
         <div class="controls">
           <a class="aprichiudiprogram ui-icon-plus ui-btn ui-btn-icon-notext" name="aprichiudiprogramo" data-bind="click: showProgramO"></a>
           <a class="nascondi aprichiudiprogram ui-icon-minus ui-btn ui-btn-icon-notext" name="aprichiudiprogramc" data-bind="click: showProgramC"></a>
-          <div class="ui-controlgroup box-gradi-tondo tempPresunta ui-bar-a" data-bind="style:{background: tempPresunta() == 1 ? 'green' : 'red' }">
+          <div class="ui-controlgroup box-gradi-tondo tempPresuntalight ui-bar-a" data-bind="style:{background: tempPresunta() == 1 ? 'green' : 'red' }">
             <span data-bind="text: tempPresunta() == 1 ? 'ON' : 'OFF'"></span>
           </div>
           <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
@@ -89,6 +94,9 @@
               <a class="ui-btn ui-corner-all" name="pulson" data-bind="click: onMode">on</a>
               <a class="ui-last-child ui-btn ui-corner-all" name="pulsoff" data-bind= "click: offMode">off</a>
             </div>
+          </div>
+          <div class="stagione" data-bind="visible: showseason == 1">
+            <a name="pulsseason" data-bind="text: season(), click: seasonMode"></a>
           </div>
           <div class="nascondi" name="apri">
             <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">

@@ -58,6 +58,11 @@ $(document).on( "templateinit", (event) ->
         @boost = 1
       else
         @boost = 0
+      if @device.config.showseason?
+        @showseason = 1
+      else
+        @showseason = 0
+
       attribute = @getAttribute("result")
       @tempPresunta = ko.observable attribute.value()
       attribute.value.subscribe (newValue) =>
@@ -67,6 +72,16 @@ $(document).on( "templateinit", (event) ->
       @tempEffettiva = ko.observable attributetemperature.value()
       attributetemperature.value.subscribe (newValue) =>
         @tempEffettiva newValue
+
+      attributeseason = @getAttribute("season")
+      @season = ko.observable attributeseason.value()
+      attributeseason.value.subscribe (newValue) =>
+        @season newValue
+
+      attributevalve = @getAttribute("valve")
+      @valve = ko.observable attributevalve.value()
+      attributevalve.value.subscribe (newValue) =>
+        @valve newValue
 
       ko.computed( =>
         textValue = @inputValue()
@@ -90,18 +105,16 @@ $(document).on( "templateinit", (event) ->
       @pulson = $(elements).find('[name=pulson]')
       @pulsboost = $(elements).find('[name=pulsboost]')
       @pulsoff = $(elements).find('[name=pulsoff]')
-      # @bandella_orario = $(elements).find('[name=bandella_orario]')
+      @pulsseason = $(elements).find('[name=pulsseason]')
       @segna_orario = $(elements).find('[name=segna_orario]')
       @input_barra_orario = $(elements).find('[name=input_barra_orario]')
       @input_segna_orario = $(elements).find('[name=input_segna_orario]')
       @input = $(elements).find('.spinbox input')
       @input.spinbox()
       @updateButtons()
-      # @orarioBarra()
       @getAttribute('mode').value.subscribe( => @updateButtons() )
-      # @fineAutoMode()
-      console.log "AFTER RENDER"
-
+      if @season is "winter" then @pulsseasonw.removeClass('nascondi')
+      if @season is "summer" then @pulsseasons.removeClass('nascondi')
       return
     showProgramO: ->
       @zonaprogram.removeClass('nascondi')
@@ -130,7 +143,12 @@ $(document).on( "templateinit", (event) ->
       @changeModeTo "auto"
     boostMode: -> @changeModeTo "boost"
     setTemp: -> @changeTemperatureTo "#{@inputValue.value()}"
-
+    seasonMode: ->
+      console.log @season() , "<---- SEASON"
+      if @season() is "winter"
+        @changeSeasonTo "summer"
+      else
+        @changeSeasonTo "winter"
     timeoutapri: ->
       @apri.removeClass('nascondi')
       @changeMinToAutoModeTo(0) #azzera conteggio minuti
@@ -138,7 +156,6 @@ $(document).on( "templateinit", (event) ->
       tempo_format = @formattaTempo(@importatempo)
       @finetempo.val(tempo_format)
       @aggiungiminuti = 0 #resetta conteggio minuti aggiunti
-
     somma1m: -> @aggiungitempo(1)
     somma5m: -> @aggiungitempo(5)
     somma30m: -> @aggiungitempo(30)
@@ -172,36 +189,7 @@ $(document).on( "templateinit", (event) ->
         else
           @changeModeTo @modo
           @changeMinToAutoModeTo(@aggiungiminuti)
-          # setTimeout (=> @fineAutoMode()) , 2000 #delay
 
-    # orarioBarra: ->
-    #   pos = @calcolaPos(@time.value())
-    #   if pos < 50
-    #     verso = pos
-    #   else
-    #     verso = pos - 25
-    #   if @interfaccia is 1
-    #     @segna_orario.css("bottom", "40px")
-    #   #   @bandella_orario.css("height", "40px")
-    #   # @bandella_orario.css("left", "#{pos}%")
-    #   @segna_orario.css("left", "#{verso}%")
-    #   tempo_esatto = @formattaTempo(@time.value())
-    #   @segna_orario.html(tempo_esatto)
-    # fineAutoMode: ->
-    #   turnam = @timeturnam()
-    #   console.log turnam,"<--TURNAM"
-    #   pos = @calcolaPos(turnam)
-    #   if pos < 50
-    #     verso = pos
-    #   else
-    #     verso = pos - 25
-    #   if @interfaccia is 1
-    #     @input_segna_orario.css("bottom", "25px")
-    #     @input_barra_orario.css("height", "25px")
-    #   @input_barra_orario.css("left", "#{pos}%")
-    #   @input_segna_orario.css("left", "#{verso}%")
-    #   tempo_esatto = @formattaTempo(turnam)
-    #   @input_segna_orario.html(tempo_esatto)
     formattaTempo: (tempo) ->
       # date = tempo.value()
       today = new Date(tempo)
@@ -211,11 +199,7 @@ $(document).on( "templateinit", (event) ->
         today.getFullYear() + "  " +
         ("0" + today.getHours())[-2..] + ":" +
         ("0" + today.getMinutes())[-2..]
-      console.log tempo, "TTTTTTTTT"
       return tempo_format
-
-
-
 
     calcolaPos: (tempo) ->
       today = new Date(tempo)
@@ -224,13 +208,7 @@ $(document).on( "templateinit", (event) ->
       totale_minuti = Math.floor(totale_minuti % 1440)
       pos = Math.round(100 / (1440 / totale_minuti) * 10) / 10
                             #(minuti in un giorno/totale_minuti)
-
       return pos
-
-
-
-
-
     aggiungitempo: (minuti) ->
       @importatempo.setTime(@importatempo.getTime() + (minuti * 60 * 1000))
       @aggiungiminuti = @aggiungiminuti + minuti
@@ -240,6 +218,10 @@ $(document).on( "templateinit", (event) ->
       @pulsmanu.removeClass('puls-mezzo-acceso')
       @pulsoff.removeClass('puls-mezzo-acceso')
       @pulson.removeClass('puls-mezzo-acceso')
+    changeSeasonTo: (season) ->
+      @device.rest.changeSeasonTo({season}, global: no)
+        .done(ajaxShowToast)
+        .fail(ajaxAlertFail)
     changeModeTo: (mode) ->
       @device.rest.changeModeTo({mode}, global: no)
         .done(ajaxShowToast)

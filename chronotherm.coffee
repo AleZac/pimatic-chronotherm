@@ -3,17 +3,22 @@ module.exports = (env) ->
   assert = env.require 'cassert'
   types = env.require('decl-api').types
   _ = env.require 'lodash'
+  M = env.matcher
+  request = require 'request'
+
 
   class ChronoThermPlugin extends env.plugins.Plugin
 
     init: (app, @framework, @config) =>
       deviceConfigDef = require("./device-config-schema")
-
       @framework.deviceManager.registerDeviceClass("ChronoThermDevice", {
         configDef: deviceConfigDef.ChronoThermDevice,
         createCallback: (config, lastState, framework) ->
           return new ChronoThermDevice(config, lastState)
       })
+
+      @framework.ruleManager.addActionProvider(new ChronoThermSeasonActionProvider(@framework))
+      @framework.ruleManager.addActionProvider(new ChronoThermMintoAutomodeActionProvider(@framework))
       # wait till all plugins are loaded
       @framework.on "after init", =>
       # Check if the mobile-frontent was loaded and get a instance
@@ -34,6 +39,13 @@ module.exports = (env) ->
     cas5: 0
     cas6: 0
     cas7: 0
+    sum1: 0
+    sum2: 0
+    sum3: 0
+    sum4: 0
+    sum5: 0
+    sum6: 0
+    sum7: 0
     realtemperature: 0
     result: 0
     perweb: 0
@@ -45,6 +57,54 @@ module.exports = (env) ->
       result:
         description: "Result"
         type: "number"
+      cas1:
+        description: "Variable to insert winter value"
+        type: "string"
+      cas2:
+        description: "Variable to insert winter value"
+        type: "string"
+      cas3:
+        description: "Variable to insert winter value"
+        type: "string"
+      cas4:
+        description: "Variable to insert winter value"
+        type: "string"
+      cas5:
+        description: "Variable to insert winter value"
+        type: "string"
+      cas6:
+        description: "Variable to insert winter value"
+        type: "string"
+      cas7:
+        description: "Variable to insert winter value"
+        type: "string"
+      sum1:
+        description: "Variable to insert summmer value"
+        type: "string"
+      sum2:
+        description: "Variable to insert summmer value"
+        type: "string"
+      sum3:
+        description: "Variable to insert summmer value"
+        type: "string"
+      sum4:
+        description: "Variable to insert summmer value"
+        type: "string"
+      sum5:
+        description: "Variable to insert summmer value"
+        type: "string"
+      sum6:
+        description: "Variable to insert summmer value"
+        type: "string"
+      sum7:
+        description: "Variable to insert summmer value"
+        type: "string"
+      realtemperature:
+        description: "Variable with real temperature"
+        type: "string"
+      perweb:
+        description: "perweb"
+        type: "string"
       mode:
         description: "The current mode"
         type: "string"
@@ -57,33 +117,6 @@ module.exports = (env) ->
         label: "Automatic temperature"
         description: "Automatic temperature"
         type: "string"
-      cas1:
-        description: "Variable to insert value"
-        type: "string"
-      cas2:
-        description: "Variable to insert value"
-        type: "string"
-      cas3:
-        description: "Variable to insert value"
-        type: "string"
-      cas4:
-        description: "Variable to insert value"
-        type: "string"
-      cas5:
-        description: "Variable to insert value"
-        type: "string"
-      cas6:
-        description: "Variable to insert value"
-        type: "string"
-      cas7:
-        description: "Variable to insert value"
-        type: "string"
-      realtemperature:
-        description: "Variable with real temperature"
-        type: "string"
-      perweb:
-        description: "perweb"
-        type: "string"
       mintoautomode:
         description: "minute to turn to automode"
         type: "number"
@@ -93,11 +126,22 @@ module.exports = (env) ->
       timeturnam:
         description: "time to turn to automode"
         type: "number"
-      # valve:
-      #   description: "name of the variable that enable valve"
-      #   type: "string"
-
+      valve:
+        description: "valve"
+        type: "boolean"
+      season:
+        description: "The current season"
+        type: "string"
+        enum: ["winter", "summer"]
     actions:
+      changeValveTo:
+        params:
+          valve:
+            type:"boolean"
+      changeSeasonTo:
+        params:
+          season:
+            type: "string"
       changeModeTo:
         params:
           mode:
@@ -126,12 +170,20 @@ module.exports = (env) ->
       @cas5 = 0
       @cas6 = 0
       @cas7 = 0
+      @sum1 = lastState?.sum1?.value or 0
+      @sum2 = 0
+      @sum3 = 0
+      @sum4 = 0
+      @sum5 = 0
+      @sum6 = 0
+      @sum7 = 0
       @realtemperature = 0
       @result = 0
       @perweb = 0
       @setMode(lastState?.mode?.value or "auto")
       @intattivo = 0
       @setManuTemp(lastState?.manuTemp?.value or 20)
+      @season = lastState?.season?.value or "winter"
       @timeturnam = lastState?.timeturnam?.value
       if @timeturnam? and @timeturnam isnt 0
         @timeturnam = new Date(@timeturnam)
@@ -153,6 +205,13 @@ module.exports = (env) ->
         {name: "cas5", expression: @config.cas5Ref}
         {name: "cas6", expression: @config.cas6Ref}
         {name: "cas7", expression: @config.cas7Ref}
+        {name: "sum1", expression: @config.sum1Ref}
+        {name: "sum2", expression: @config.sum2Ref}
+        {name: "sum3", expression: @config.sum3Ref}
+        {name: "sum4", expression: @config.sum4Ref}
+        {name: "sum5", expression: @config.sum5Ref}
+        {name: "sum6", expression: @config.sum6Ref}
+        {name: "sum7", expression: @config.sum7Ref}
         {name: "realtemperature", expression: @config.realtemperature}
       ]
         do (reference) =>
@@ -173,30 +232,16 @@ module.exports = (env) ->
                   assert false
             ).then((val) =>
               if val
-                env.logger.debug name, val
+                env.logger.debug @id, name, val
                 if name is "realtemperature"
                   val = val.toFixed(1)
                   @_setAttribute name, val
                 else
                   @errori name, val
               return @[name]
-
             )
           )
           @_createGetter(name, evaluate)
-
-
-
-
-      # console.log @config.valve," <-----------"
-      # @vars = @framework.variableManager
-      # if @config.valve?
-      #   variable = framework.variableManager.getVariableByName(@config.valve)
-      # @framework.variableManager.setVariableToValue(@config.valve, true, variable.unit)
-
-
-
-
       super()
 
       @errore_giorni()
@@ -230,13 +275,22 @@ module.exports = (env) ->
       @_setAttribute name, val
       @errore_giorni()
     errore_giorni: () ->
-      acas1 = @cas1.toString().split(',')
-      acas2 = @cas2.toString().split(',')
-      acas3 = @cas3.toString().split(',')
-      acas4 = @cas4.toString().split(',')
-      acas5 = @cas5.toString().split(',')
-      acas6 = @cas6.toString().split(',')
-      acas7 = @cas7.toString().split(',')
+      if @season is "winter"
+        acas1 = @cas1.toString().split(',')
+        acas2 = @cas2.toString().split(',')
+        acas3 = @cas3.toString().split(',')
+        acas4 = @cas4.toString().split(',')
+        acas5 = @cas5.toString().split(',')
+        acas6 = @cas6.toString().split(',')
+        acas7 = @cas7.toString().split(',')
+      else
+        acas1 = @sum1.toString().split(',')
+        acas2 = @sum2.toString().split(',')
+        acas3 = @sum3.toString().split(',')
+        acas4 = @sum4.toString().split(',')
+        acas5 = @sum5.toString().split(',')
+        acas6 = @sum6.toString().split(',')
+        acas7 = @sum7.toString().split(',')
 
       array_giorni = acas1[0] + acas2[0] + acas3[0] + acas4[0] + acas5[0] + acas6[0] + acas7[0]
       somma_giorni = 0
@@ -268,12 +322,8 @@ module.exports = (env) ->
         ), 3000
       @emit "perweb", zero
       return Promise.resolve()
-
     aggiornaTempo: () ->
-      # console.log "QUI"
-      # if @config.valve isnt false
-      #   console.log "VALVE ESISTE"
-      #   @setValve() #set valve to true or false
+      @setValve() #set valve to true or false
       now = new Date()
       @time = now
       if @timeturnam is 0
@@ -286,34 +336,28 @@ module.exports = (env) ->
       else
       @emit "time", @time
       return Promise.resolve()
-
-    # setValve:() ->
-    #   if @result < @realtemperature
-    #     value = true
-    #   else
-    #     value = false
-    #   console.log value, "<-- VALUE"
-    #   name = @config.valve
-    #   console.log name, "<-- NAME"
-    #   variable = @varManager.getVariableByName(name)
-    #   unless variable?
-    #     throw new Error("Could not find variable with name #{name}")
-    #   console.log variable, "<---- VARIABLE"
-    #   @varManager.setVariableToValue(name, value)
-    #   console.log "<---- OK---->"
-    #   return Promise.resolve()
-
     destroy: () ->
       @varManager.cancelNotifyOnChange(cl) for cl in @_exprChangeListeners
       super()
     requestValue: () ->
-      l01 = @cas1
-      l02 = @cas2
-      l03 = @cas3
-      l04 = @cas4
-      l05 = @cas5
-      l06 = @cas6
-      l07 = @cas7
+      # if @config.season is "winter"
+      if @season is "winter"
+        l01 = @cas1
+        l02 = @cas2
+        l03 = @cas3
+        l04 = @cas4
+        l05 = @cas5
+        l06 = @cas6
+        l07 = @cas7
+      else
+        l01 = @sum1
+        l02 = @sum2
+        l03 = @sum3
+        l04 = @sum4
+        l05 = @sum5
+        l06 = @sum6
+        l07 = @sum7
+
       array01 = []
       tempo = new Date()
       ora = tempo.getHours() #prende solo l'ora non i minuti / get the hours
@@ -361,10 +405,34 @@ module.exports = (env) ->
       array_dei_numeri = array_dei_giorni.map(Number) # trasforma la stringa di array in un array di numeri
       if giornods in array_dei_numeri   # transform the string of day to a new array
         return array01
+    setValve:() ->
+      if @config.interface is 1
+        if @result is 1
+          @valve = true
+        else
+          @valve = false
+      else
+        if @season is "winter"
+          if @realtemperature < @result
+            @valve = true
+          else
+            @valve = false
+        else
+          if @realtemperature > @result
+            @valve = true
+          else
+            @valve = false
+      @emit "valve", @valve
+      return Promise.resolve()
     _setAttribute: (attributeName, value) ->
       if @[attributeName] isnt value
         @[attributeName] = value
         @emit attributeName, value
+    setSeason: (season) ->
+      if season is @season then return
+      @season = season
+      @emit "season",@season
+      return Promise.resolve()
     setMode: (mode) ->
       if mode is @_mode then return
       switch mode
@@ -402,7 +470,6 @@ module.exports = (env) ->
         @emit "result", @result
       @emit "manuTemp", @_manuTemp
       return Promise.resolve()
-
     setMinToAutoModeTo: (mintoautomode) ->
       if mintoautomode is 0
         @timeturnam = 0
@@ -412,16 +479,15 @@ module.exports = (env) ->
       @emit "mintoautomode", @mintoautomode
       @emit "timeturnam", @timeturnam
       return Promise.resolve()
-
-    # Actions : called from UI & rules
+    changeSeasonTo: (season) ->
+      @setSeason(season)
+      return Promise.resolve()
     changeModeTo: (mode) ->
       @setMode(mode)
       return Promise.resolve()
     changeTemperatureTo: (manuTemp) ->
-      # @setMode('manu')
       @setManuTemp(manuTemp)
       return Promise.resolve()
-
     changeMinToAutoModeTo: (mintoautomode) ->
       @setMinToAutoModeTo(mintoautomode)
       return Promise.resolve()
@@ -442,6 +508,186 @@ module.exports = (env) ->
     getCas5: () -> Promise.resolve(@cas5)
     getCas6: () -> Promise.resolve(@cas6)
     getCas7: () -> Promise.resolve(@cas7)
-    # getValve: () -> Promise.resolve(@valve)
+    getSum1: () -> Promise.resolve(@sum1)
+    getSum2: () -> Promise.resolve(@sum2)
+    getSum3: () -> Promise.resolve(@sum3)
+    getSum4: () -> Promise.resolve(@sum4)
+    getSum5: () -> Promise.resolve(@sum5)
+    getSum6: () -> Promise.resolve(@sum6)
+    getSum7: () -> Promise.resolve(@sum7)
+    getValve: () -> Promise.resolve(@valve)
+    getSeason: () -> Promise.resolve(@season)
+
+  class ChronoThermSeasonActionProvider extends env.actions.ActionProvider
+
+    constructor: (@framework) ->
+
+    parseAction: (input, context) =>
+      # The result the function will return:
+      retVar = null
+
+      season = _(@framework.deviceManager.devices).values().filter(
+        (device) => device.hasAction("changeSeasonTo")
+      ).value()
+
+      if season.length is 0 then return
+
+      device = null
+      valueTokens = null
+      match = null
+
+      # Try to match the input string with:
+      M(input, context)
+        .match('set season of ')
+        .matchDevice(season, (next, d) =>
+          next.match(' to ')
+            .matchStringWithVars( (next, ts) =>
+              m = next.match(' season', optional: yes)
+              if device? and device.id isnt d.id
+                context?.addError(""""#{input.trim()}" is ambiguous.""")
+                return
+              device = d
+              valueTokens = ts
+              match = m.getFullMatch()
+            )
+        )
+
+      if match?
+        if valueTokens.length is 1 and not isNaN(valueTokens[0])
+          value = valueTokens[0]
+          assert(not isNaN(value))
+          modes = ["winter", "summer"]
+          if modes.indexOf(value) < -1
+            context?.addError("Allowed modes: winter,summer")
+            return
+        return {
+          token: match
+          nextInput: input.substring(match.length)
+          actionHandler: new ChronoThermSeasonActionHandler(@framework, device, valueTokens)
+        }
+      else
+        return null
+
+
+  class ChronoThermSeasonActionHandler extends env.actions.ActionHandler
+
+    constructor: (@framework, @device, @valueTokens) ->
+      assert @device?
+      assert @valueTokens?
+
+    setup: ->
+      @dependOnDevice(@device)
+      super()
+
+    ###
+    Handles the above actions.
+    ###
+    _doExecuteAction: (simulate, value) =>
+      return (
+        if simulate
+          __("would set mode %s to %s", @device.name, value)
+        else
+          @device.changeSeasonTo(value).then( => __("set season %s to %s", @device.name, value) )
+      )
+
+    # ### executeAction()
+    executeAction: (simulate) =>
+      @framework.variableManager.evaluateStringExpression(@valueTokens).then( (value) =>
+        @lastValue = value
+        return @_doExecuteAction(simulate, value)
+      )
+
+    # ### hasRestoreAction()
+    hasRestoreAction: -> yes
+    # ### executeRestoreAction()
+    executeRestoreAction: (simulate) => Promise.resolve(@_doExecuteAction(simulate, @lastValue))
+
+
+  class ChronoThermMintoAutomodeActionProvider extends env.actions.ActionProvider
+
+    constructor: (@framework) ->
+
+    parseAction: (input, context) =>
+      # The result the function will return:
+      retVar = null
+
+      minute = _(@framework.deviceManager.devices).values().filter(
+        (device) => device.hasAction("changeMinToAutoModeTo")
+      ).value()
+
+      if minute.length is 0 then return
+
+      device = null
+      valueTokens = null
+      match = null
+
+      # Try to match the input string with:
+      M(input, context)
+        .match('set minute to automode of ')
+        .matchDevice(minute, (next, d) =>
+          next.match(' to ')
+            .matchNumericExpression( (next, ts) =>
+              m = next.match(' min', optional: yes)
+              if device? and device.id isnt d.id
+                context?.addError(""""#{input.trim()}" is ambiguous.""")
+                return
+              device = d
+              valueTokens = ts
+              match = m.getFullMatch()
+            )
+        )
+
+      if match?
+        if valueTokens.length is 1 and not isNaN(valueTokens[0])
+          value = valueTokens[0]
+          assert(not isNaN(value))
+          value = parseFloat(value)
+          if value < 0.0
+            context?.addError("Can't set minute to a negative value.")
+            return
+        return {
+          token: match
+          nextInput: input.substring(match.length)
+          actionHandler: new ChronoThermMintoAutomodeActionHandler(@framework, device, valueTokens)
+        }
+      else
+        return null
+
+  class ChronoThermMintoAutomodeActionHandler extends env.actions.ActionHandler
+
+    constructor: (@framework, @device, @valueTokens) ->
+      assert @device?
+      assert @valueTokens?
+
+    setup: ->
+      @dependOnDevice(@device)
+      super()
+
+    ###
+    Handles the above actions.
+    ###
+    _doExecuteAction: (simulate, value) =>
+      return (
+        if simulate
+          __("would set minute of %s to %s min", @device.name, value)
+        else
+          @device.changeMinToAutoModeTo(value).then( =>
+            __("set minute of %s to %s min", @device.name, value)
+          )
+      )
+
+    # ### executeAction()
+    executeAction: (simulate) =>
+      @framework.variableManager.evaluateNumericExpression(@valueTokens).then( (value) =>
+        # value = @_clampVal value
+        @lastValue = value
+        return @_doExecuteAction(simulate, value)
+      )
+
+    # ### hasRestoreAction()
+    hasRestoreAction: -> yes
+    # ### executeRestoreAction()
+    executeRestoreAction: (simulate) => Promise.resolve(@_doExecuteAction(simulate, @lastValue))
+
   plugin = new ChronoThermPlugin
   return plugin

@@ -28,7 +28,6 @@
   height: 18px;
 }
 #index li.chronothermdevice .box-gradi-tondo{
-  border: 1px solid #ddd;
   color: white;
   border-radius: 50%;
   text-align: center;
@@ -45,9 +44,24 @@
   font-weight: bold;
 }
 #index li.chronothermdevice .tempPresunta {
-  width: 60px;
-  height: 60px;
-  line-height: 60px;
+  width: 72px;
+  height: 72px;
+  line-height: 56px;
+  font-size: 1.1em;
+  margin-top: 10px;
+}
+#index li.chronothermdevice .inttempPresunta {
+  width: 54px;
+  height: 54px;
+  position: relative;
+  left: 8px;
+  top: 8px;
+  border-radius: 50%;
+}
+#index li.chronothermdevice .tempPresuntalight {
+  width: 56px;
+  height: 56px;
+  line-height: 56px;
   font-size: 1.1em;
   margin-top: 10px;
 }
@@ -62,9 +76,22 @@
   display: inline-block;
   margin: 0;
   margin-left: 4px;
-  margin-top: 2px;
-  margin-bottom: 2px;
+  /*margin-top: 2px;
+  margin-bottom: 2px;*/
+  margin-top: 5px;
+  margin-bottom: 5px;
   border-radius: 50%;
+}
+#index li.chronothermdevice .stagione{
+  display: inline-block;
+  font-size: 13px;
+  -ms-transform: rotate(90deg); /* IE 9 */
+  -webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+  transform: rotate(90deg);
+  line-height: 20px;
+  margin-left: -10px;
+  margin-right: -15px;
+  cursor: pointer;
 }
 /*GRAFICO*/
 #index li.chronothermdevice .globale{

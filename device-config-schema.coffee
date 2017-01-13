@@ -10,6 +10,11 @@ module.exports = {
         type: "number"
         default: 0
         required: false
+      showseason:
+        description: "Show the season interface"
+        type: "boolean"
+        default: false
+        required: false
       cas1Ref:
         description: "Variable to insert value"
         type: "string"
@@ -31,6 +36,27 @@ module.exports = {
       cas7Ref:
         description: "Variable to insert value"
         type: "string"
+      sum1Ref:
+        description: "Variable to insert value"
+        type: "string"
+      sum2Ref:
+        description: "Variable to insert value"
+        type: "string"
+      sum3Ref:
+        description: "Variable to insert value"
+        type: "string"
+      sum4Ref:
+        description: "Variable to insert value"
+        type: "string"
+      sum5Ref:
+        description: "Variable to insert value"
+        type: "string"
+      sum6Ref:
+        description: "Variable to insert value"
+        type: "string"
+      sum7Ref:
+        description: "Variable to insert value"
+        type: "string"
       realtemperature:
         description: "variable with the real temperature"
         type: "string"
@@ -47,9 +73,5 @@ module.exports = {
       ontemperature:
         description: "the temperature for the on button"
         type: "number"
-      # valve:
-      #   description: "name of the variable that enable valve"
-      #   type: "string"
-      #   required: false
   }
 }

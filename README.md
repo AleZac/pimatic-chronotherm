@@ -23,6 +23,13 @@ then add device to config.json
   "cas5Ref": "$di5",
   "cas6Ref": "$di6",
   "cas7Ref": "$di7",
+  "sum1Ref": "$sa1",
+  "sum2Ref": "$sa2",
+  "sum3Ref": "$di3",
+  "sum4Ref": "$di4",
+  "sum5Ref": "$di5",
+  "sum6Ref": "$di6",
+  "sum7Ref": "$di7",
   "realtemperature": "$switch.manuTemp",
   "interval": 240,
   "offtemperature": 4,
@@ -68,11 +75,23 @@ I have included the link to 7 variables (cas Ref 1, Ref 2 cas, cas3Ref …) if y
 You can create only those you use.
 
 ***For those who do not use, the value of its variable must be 0***
---> here you don't need to add a variable in Pimatic
-
 
 IMPORTANT is that every days of the week must be present in a variable
 See EXAMPLE
+
+When the ***realtime temperature*** is lower then the ***result*** of the schedule or of the manual mode the plugin set ***valve*** (variable) to true
+
+If you insert
+```
+"showseason": true,
+```
+a new function is added to the plugin.
+Now you can control the winter and the summer
+When summer is active the plugin no longer work with cas1Ref,cas2Ref.... but with sum1Ref,sum2Ref,sum3Ref,sum4Ref,sum5Ref,sum6Ref,sum7Ref.
+To compile sum1Ref....... the rules are the same but the variable ***valve*** work in reverse
+When the ***realtime temperature*** is greater then the ***result*** of the schedule or of the manual mode the plugin set ***valve*** (variable) to true
+
+***If you are not interested about the "Season" you can set sum1Ref,sum2Ref,sum3Ref,sum4Ref,sum5Ref,sum6Ref,sum7Ref with a variable that is 0***
 
 ***realtemperature*** is the link to a variable sensor that detects the temperature in real time, it will then be displayed in the green circle of the web interface.
 
@@ -98,6 +117,13 @@ $room.result --> is the actually SetPoint of your ChronoThermDevice
 ```
 when $room.result changes then set temp of Thermostat to $room.result
 ```
+or
+```
+$room.valve --> is the on/off of your ChronoThermDevice
+```
+```
+when $room.valve is true then set Thermostat to ON else OFF
+```
 
 ###WEB INTERFACE
 
@@ -109,6 +135,10 @@ when $room.result changes then set temp of Thermostat to $room.result
 
 ***The blue circle*** indicates the supposed temperature programming
 
+When the border of ***The blue circle*** is ***green*** the valve variable is true
+
+When the border of ***The blue circle*** is ***white*** the valve variable is false
+
 ***Auto*** indicates that the supposed temperature will be based on the schedule
 
 ***Manu*** indicates that the supposed temperature will be to set manually
@@ -119,6 +149,8 @@ when $room.result changes then set temp of Thermostat to $room.result
 
 Once click to ***Manu***,***On***,***Off*** It will be asked how long you should be active that function
 Buttons What appear are respectively: add 1 minute, add 5 minutes, add 30 minutes, add 1 hour, add 1 day, add minute to the end of the day and ALWAYS
+
+***winter or summer*** show the season current
 
 ###EXAMPLE 1
 ```
