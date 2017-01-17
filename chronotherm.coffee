@@ -4,7 +4,6 @@ module.exports = (env) ->
   types = env.require('decl-api').types
   _ = env.require 'lodash'
   M = env.matcher
-  request = require 'request'
 
 
   class ChronoThermPlugin extends env.plugins.Plugin
@@ -150,10 +149,10 @@ module.exports = (env) ->
         params:
           manuTemp:
             type: "number"
-      changeAutoTempTo:
-        params:
-          autoTemp:
-            type: "number"
+      # changeAutoTempTo:
+      #   params:
+      #     autoTemp:
+      #       type: "number"
       changeMinToAutoModeTo:
         params:
           mintoautomode:
@@ -249,24 +248,25 @@ module.exports = (env) ->
       @girotempo = setInterval ( =>
         @aggiornaTempo() #giro aggiorna orario
         ), 1000 * @config.interval
+
     errori: (name, val) ->
       if @intattivo is 1
         clearTimeout @intervalId
         @intattivo = 0
       @errore = 0
-      if (/([^0-9\,\.])/g.test(val)) #check if it's only numbers and , .
+      if (/([^0-9\,\:\.])/g.test(val)) #check if it's only numbers and , :
         env.logger.debug "Inside character error"
         @errore = 1
       if val % 2 is 0 #check if all numbers are even
         env.logger.debug "Inside odd error"
         @errore = 1
       conteggio = val.toString().split(',')
-      if conteggio[1]? and conteggio[1]*1000 isnt 0 #check if second number is 0
+      if conteggio[1]? and conteggio[1] isnt "00:00" #check if second number is 00:00
         env.logger.debug "Inside 0 error"
         @errore = 1
       for elementi in conteggio[1..] by 2
-        moltiplica = elementi * 100
-        if moltiplica > 2359 #check if all hours are logical
+        clock = elementi.toString().split(':')
+        if clock[0] > 23 or clock[1] > 59 #check if all hours are logical
           env.logger.debug "Inside hours error"
           @errore = 1
       if @errore is 1 #tutto ok procedi
@@ -336,11 +336,7 @@ module.exports = (env) ->
       else
       @emit "time", @time
       return Promise.resolve()
-    destroy: () ->
-      @varManager.cancelNotifyOnChange(cl) for cl in @_exprChangeListeners
-      super()
     requestValue: () ->
-      # if @config.season is "winter"
       if @season is "winter"
         l01 = @cas1
         l02 = @cas2
@@ -363,17 +359,19 @@ module.exports = (env) ->
       ora = tempo.getHours() #prende solo l'ora non i minuti / get the hours
       minuti = tempo.getMinutes() #get the minutes
       if minuti < 10    # corregge problema dello 0 nei minuti minori di 10
-        orario = "#{ora}.0#{minuti}" # correct when minutes less then 10 add a 0
+        orario = "#{ora}:0#{minuti}" # correct when minutes less then 10 add a 0
       else
-        orario = "#{ora}.#{minuti}"
-      orario = Math.round(orario*100)
+        orario = "#{ora}:#{minuti}"
+
+      # orario = Math.round(orario*100)
+
       giornods = tempo.getDay() #numero del giorno della settimana
       if giornods is 0  # get the number of the day and change sunday to 7
         giornods = 7
       lista_variabili = [[l01],[l02],[l03],[l04],[l05],[l06],[l07]]# multi array
       for i in lista_variabili     # find the right day inside multi array
         test = @trova_giorno(giornods, i)
-        if test
+        if test?
           array01 = test  #return the right array
       if array01.length > 0
         lung_array01 = array01.length #trova la lunghezza dell'array / find array length
@@ -382,13 +380,27 @@ module.exports = (env) ->
       else
         array01 = []
       array_orari = (x for x in array01 by 2) #prende solo i dati pari (orari) / take values by 2
-      nao = for valore_array_orari in array_orari #porta ogni valore a *100, problemi bug
-        Math.round(valore_array_orari*100)     #all values *100 to solve a bug
-      nao.push(2359) #aggiunge il valore 2359 alla fine dell' array
-                     #insert 2359 to the end of array
-      for valore_array_orari, pao in nao
-        if orario >= nao[pao] and orario < nao[pao + 1] #find the position of the right value
-          autoTemp = array_esatto[(pao * 2)+1]
+      array_orari.push("23:59") #aggiunge il valore 23:59 alla fine dell' array
+                     #insert 23:59 to the end of array
+
+
+      for ogni_array_orari, pao in array_orari
+
+        orario_basso = array_orari[pao].toString().split(':')
+        minuti_orario_basso = Number(orario_basso[0]) * 60 + Number(orario_basso[1])
+        orario_giusto = orario.toString().split(':')
+        minuti_orario = Number(orario_giusto[0]) * 60 + Number(orario_giusto[1])
+        if array_orari[pao+1]?
+          orario_alto = array_orari[pao+1].toString().split(':')
+          minuti_orario_alto = Number(orario_alto[0]) * 60 + Number(orario_alto[1])
+        else orario_alto = 1440
+        if minuti_orario >= minuti_orario_basso and minuti_orario < minuti_orario_alto
+                  #find the position of the right value
+          autoTemp = array_esatto[(pao * 2)+1] #the autotemperature in now time of schedule
+          @minuti_alnuovo_schedule = minuti_orario_alto - minuti_orario
+
+
+
       @_autoTemp = Number(autoTemp)
       if @_mode is "auto"
         @result = @_autoTemp
@@ -405,6 +417,12 @@ module.exports = (env) ->
       array_dei_numeri = array_dei_giorni.map(Number) # trasforma la stringa di array in un array di numeri
       if giornods in array_dei_numeri   # transform the string of day to a new array
         return array01
+    calcolaEOD: () ->
+      today = new Date(@time)
+      oggi_ora = today.getHours()
+      oggi_minuti = today.getMinutes()
+      minuti_rimanenti = 1440 - ((oggi_ora * 60) + (oggi_minuti))
+      return minuti_rimanenti
     setValve:() ->
       if @config.interface is 1
         if @result is 1
@@ -471,6 +489,10 @@ module.exports = (env) ->
       @emit "manuTemp", @_manuTemp
       return Promise.resolve()
     setMinToAutoModeTo: (mintoautomode) ->
+      if mintoautomode is 0.307
+        mintoautomode = @calcolaEOD()
+      if mintoautomode is 0.305
+        mintoautomode = @minuti_alnuovo_schedule
       if mintoautomode is 0
         @timeturnam = 0
       else
@@ -491,7 +513,9 @@ module.exports = (env) ->
     changeMinToAutoModeTo: (mintoautomode) ->
       @setMinToAutoModeTo(mintoautomode)
       return Promise.resolve()
-
+    destroy: () ->
+      @varManager.cancelNotifyOnChange(cl) for cl in @_exprChangeListeners
+      super()
     getManuTemp: () ->  Promise.resolve(@_manuTemp)
     getMode: () ->  Promise.resolve(@_mode)
     getAutoTemp: () -> Promise.resolve(@_autoTemp)
@@ -567,8 +591,6 @@ module.exports = (env) ->
         }
       else
         return null
-
-
   class ChronoThermSeasonActionHandler extends env.actions.ActionHandler
 
     constructor: (@framework, @device, @valueTokens) ->
@@ -601,8 +623,6 @@ module.exports = (env) ->
     hasRestoreAction: -> yes
     # ### executeRestoreAction()
     executeRestoreAction: (simulate) => Promise.resolve(@_doExecuteAction(simulate, @lastValue))
-
-
   class ChronoThermMintoAutomodeActionProvider extends env.actions.ActionProvider
 
     constructor: (@framework) ->
@@ -652,7 +672,6 @@ module.exports = (env) ->
         }
       else
         return null
-
   class ChronoThermMintoAutomodeActionHandler extends env.actions.ActionHandler
 
     constructor: (@framework, @device, @valueTokens) ->

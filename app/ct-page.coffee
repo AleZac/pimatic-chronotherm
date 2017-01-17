@@ -91,6 +91,7 @@ $(document).on( "templateinit", (event) ->
 
       @errore_web = @getAttribute('perweb').value()
       @modo = "auto"
+      @contaEOS = 0
 
     afterRender: (elements) ->
       super(elements)
@@ -162,10 +163,12 @@ $(document).on( "templateinit", (event) ->
     somma1h: -> @aggiungitempo(60)
     somma1d: -> @aggiungitempo(1440)
     sommaFinoAFineGiornata: ->
-      today = new Date(@time.value())
-      oggi_ora = today.getHours()
-      oggi_minuti = today.getMinutes()
-      minuti_rimanenti = 1440 - ((oggi_ora * 60) + (oggi_minuti))
+      minuti_rimanenti = @calcolaEOD()
+      # minuti_rimanenti = 0.307
+      @aggiungitempo(minuti_rimanenti)
+    sommaFinoAFineSchedule: ->
+      minuti_rimanenti = @calcolaEOS()
+      # minuti_rimanenti = 0.305
       @aggiungitempo(minuti_rimanenti)
     timeoutalways: ->
       @aggiungiminuti = 0 #resetta conteggio minuti aggiunti
@@ -175,10 +178,13 @@ $(document).on( "templateinit", (event) ->
       tempo_format = @formattaTempo(@importatempo)
       @finetempo.val(tempo_format)
       @aggiungiminuti = 0 #resetta conteggio minuti aggiunti
+      @contaEOS = 0
     timeoutcancel: ->
       @apri.addClass('nascondi')
       @resettaMezzoColore()
+      @contaEOS = 0
     timeoutok: ->
+      @contaEOS = 0
       @resettaMezzoColore() #remove green button
       @apri.addClass('nascondi') #hide timeout select interface
       if @finetempo.val() is "ALWAYS"
@@ -189,9 +195,7 @@ $(document).on( "templateinit", (event) ->
         else
           @changeModeTo @modo
           @changeMinToAutoModeTo(@aggiungiminuti)
-
     formattaTempo: (tempo) ->
-      # date = tempo.value()
       today = new Date(tempo)
       tempo_format =
         ("0" + today.getDate())[-2..] + "/" +
@@ -200,7 +204,6 @@ $(document).on( "templateinit", (event) ->
         ("0" + today.getHours())[-2..] + ":" +
         ("0" + today.getMinutes())[-2..]
       return tempo_format
-
     calcolaPos: (tempo) ->
       today = new Date(tempo)
       oggi_ora = today.getHours() * 60
@@ -209,6 +212,32 @@ $(document).on( "templateinit", (event) ->
       pos = Math.round(100 / (1440 / totale_minuti) * 10) / 10
                             #(minuti in un giorno/totale_minuti)
       return pos
+    calcolaEOD: () ->
+      today = new Date(@time())
+      oggi_ora = today.getHours()
+      oggi_minuti = today.getMinutes()
+      minuti_rimanenti = 1440 - ((oggi_ora * 60) + (oggi_minuti))
+      return minuti_rimanenti
+    calcolaEOS: () ->
+      schedule = @getAttribute('perweb').value()
+      today = new Date(@time())
+      adesso_minuti = today.getHours() * 60 + today.getMinutes()
+      if @contaEOS isnt 0
+        console.log "contaEOS = num"
+        minuti_alnuovo_schedule = 0
+      else
+        for orari, num in schedule by 2
+          sched = schedule[num].toString().split(':')
+          minuti_sched = Number(sched[0]) * 60 + Number(sched[1])
+          if schedule[num+2]?
+            sched2 = schedule[num+2].toString().split(':')
+            minuti_sched2 = Number(sched2[0]) * 60 + Number(sched2[1])
+          else
+            minuti_sched2 = 1440
+          if adesso_minuti >= minuti_sched and adesso_minuti < minuti_sched2
+            minuti_alnuovo_schedule = minuti_sched2 - adesso_minuti
+            @contaEOS = num
+      return minuti_alnuovo_schedule
     aggiungitempo: (minuti) ->
       @importatempo.setTime(@importatempo.getTime() + (minuti * 60 * 1000))
       @aggiungiminuti = @aggiungiminuti + minuti
@@ -277,10 +306,17 @@ $(document).on( "templateinit", (event) ->
       valore_max = Math.max.apply(Math, val_max) # trova il valore max dei gradi
       for i,o in uuu by 2 #prende solo gli orari
         valore1 = uuu[o] #orario
-        valore2 = uuu[o+1] #valore in base a orario
-        valore3 = uuu[o+2] #orario successivo
-        pos = Math.round((valore1*100*100/24)/100) #trova x% della posizione
-        pos2 = Math.round((valore3*100*100/24)/100)
+        valore2 = uuu[o+1] #valore temperatura in base a orario
+        if uuu[o+2]?
+          valore3 = uuu[o+2] #orario successivo
+        else
+          valore3 = 23:59
+        valore_split = valore1.toString().split(':')
+        minuti = Number(valore_split[0]) * 60 + Number(valore_split[1])#Calcola minuti
+        valore_split2 = valore3.toString().split(':')
+        minuti2 = Number(valore_split2[0]) * 60 + Number(valore_split2[1])#Calcola minuti
+        pos = Math.round(100*minuti/1440)
+        pos2 = Math.round(100*minuti2/1440)
         larg = pos2 - pos - 1 # sottraggo 1 per distanziare
         if isNaN(larg)
           larg = 100 - pos
