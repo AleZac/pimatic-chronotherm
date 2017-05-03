@@ -149,10 +149,6 @@ module.exports = (env) ->
         params:
           manuTemp:
             type: "number"
-      # changeAutoTempTo:
-      #   params:
-      #     autoTemp:
-      #       type: "number"
       changeMinToAutoModeTo:
         params:
           mintoautomode:
@@ -242,32 +238,30 @@ module.exports = (env) ->
           )
           @_createGetter(name, evaluate)
       super()
-
       @errore_giorni()
       @aggiornaTempo()
       @girotempo = setInterval ( =>
         @aggiornaTempo() #giro aggiorna orario
         ), 1000 * @config.interval
-
     errori: (name, val) ->
       if @intattivo is 1
         clearTimeout @intervalId
         @intattivo = 0
       @errore = 0
       if (/([^0-9\,\:\.])/g.test(val)) #check if it's only numbers and , :
-        env.logger.debug "Inside character error"
+        env.logger.debug @name, "--> Character error, type only , : and numbers "
         @errore = 1
       if val % 2 is 0 #check if all numbers are even
-        env.logger.debug "Inside odd error"
+        env.logger.debug @name, "--> Odd error, wrong type of numbers "
         @errore = 1
       conteggio = val.toString().split(',')
-      if conteggio[1]? and conteggio[1] isnt "00:00" #check if second number is 00:00
-        env.logger.debug "Inside 0 error"
+      if conteggio[1]? and conteggio[1] isnt "00:00"#check if 2° number is 00:00
+        env.logger.debug @name, "--> Inside 0 error, the second number must be 00:00"
         @errore = 1
       for elementi in conteggio[1..] by 2
         clock = elementi.toString().split(':')
         if clock[0] > 23 or clock[1] > 59 #check if all hours are logical
-          env.logger.debug "Inside hours error"
+          env.logger.debug @name, "--> Hours error, you have write hours in a wrong way"
           @errore = 1
       if @errore is 1 #tutto ok procedi
         @errore = 0
@@ -291,13 +285,13 @@ module.exports = (env) ->
         acas5 = @sum5.toString().split(',')
         acas6 = @sum6.toString().split(',')
         acas7 = @sum7.toString().split(',')
-
       array_giorni = acas1[0] + acas2[0] + acas3[0] + acas4[0] + acas5[0] + acas6[0] + acas7[0]
       somma_giorni = 0
       for numeri in array_giorni
         aggiungi = Number(numeri)
         somma_giorni+=aggiungi
       if somma_giorni isnt 28 # 1+2+3+4+5+6+7 = 28
+        env.logger.debug @name, "--> You forgot or duplicated one or more days of the week"
         @ciclo_errore_giorni()
         return
       else
@@ -324,6 +318,7 @@ module.exports = (env) ->
       return Promise.resolve()
     aggiornaTempo: () ->
       @setValve() #set valve to true or false
+      console.log "GIRO aggiornaTempo"
       now = new Date()
       @time = now
       if @timeturnam is 0
@@ -362,9 +357,7 @@ module.exports = (env) ->
         orario = "#{ora}:0#{minuti}" # correct when minutes less then 10 add a 0
       else
         orario = "#{ora}:#{minuti}"
-
       # orario = Math.round(orario*100)
-
       giornods = tempo.getDay() #numero del giorno della settimana
       if giornods is 0  # get the number of the day and change sunday to 7
         giornods = 7
@@ -382,10 +375,7 @@ module.exports = (env) ->
       array_orari = (x for x in array01 by 2) #prende solo i dati pari (orari) / take values by 2
       array_orari.push("23:59") #aggiunge il valore 23:59 alla fine dell' array
                      #insert 23:59 to the end of array
-
-
       for ogni_array_orari, pao in array_orari
-
         orario_basso = array_orari[pao].toString().split(':')
         minuti_orario_basso = Number(orario_basso[0]) * 60 + Number(orario_basso[1])
         orario_giusto = orario.toString().split(':')
@@ -398,12 +388,19 @@ module.exports = (env) ->
                   #find the position of the right value
           autoTemp = array_esatto[(pao * 2)+1] #the autotemperature in now time of schedule
           @minuti_alnuovo_schedule = minuti_orario_alto - minuti_orario
-
-
-
       @_autoTemp = Number(autoTemp)
       if @_mode is "auto"
         @result = @_autoTemp
+      else if @_mode is "off"
+        if @season is "winter"
+          @result = @config.offtemperature
+        else
+          @result = @config.ontemperature
+      else if @_mode is "on"
+        if @season is "winter"
+          @result = @config.ontemperature
+        else
+          @result = @config.offtemperature
       @emit "autoTemp", @_autoTemp
       @emit "result", @result
       @emit "perweb", array01
@@ -429,17 +426,6 @@ module.exports = (env) ->
           @valve = true
         else
           @valve = false
-      else
-        if @season is "winter"
-          if @realtemperature < @result
-            @valve = true
-          else
-            @valve = false
-        else
-          if @realtemperature > @result
-            @valve = true
-          else
-            @valve = false
       @emit "valve", @valve
       return Promise.resolve()
     _setAttribute: (attributeName, value) ->
@@ -450,6 +436,7 @@ module.exports = (env) ->
       if season is @season then return
       @season = season
       @emit "season",@season
+      @requestValue()
       return Promise.resolve()
     setMode: (mode) ->
       if mode is @_mode then return
@@ -464,7 +451,10 @@ module.exports = (env) ->
           @emit "result", @result
         when 'on'
           if @config.interface is 0
-            @result = @config.ontemperature
+            if @season is "winter"
+              @result = @config.ontemperature
+            else
+              @result = @config.offtemperature
           else
             @result = 1
           @emit "result", @result
@@ -473,7 +463,10 @@ module.exports = (env) ->
           @emit "result", @result
         when 'off'
           if @config.interface is 0
-            @result = @config.offtemperature
+            if @season is "winter"
+              @result = @config.offtemperature
+            else
+              @result = @config.ontemperature
           else
             @result = 0
           @emit "result", @result

@@ -145,7 +145,6 @@ $(document).on( "templateinit", (event) ->
     boostMode: -> @changeModeTo "boost"
     setTemp: -> @changeTemperatureTo "#{@inputValue.value()}"
     seasonMode: ->
-      console.log @season() , "<---- SEASON"
       if @season() is "winter"
         @changeSeasonTo "summer"
       else

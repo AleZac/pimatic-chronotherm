@@ -82,7 +82,7 @@
       </div>
     </div>
     <div class="interfaccia1" data-bind="visible: interfaccia == 1">
-      <div class="pulsanti">
+      <div class="pulsanti"data-bind="visible: errore_web != 0">
         <div class="controls">
           <a class="aprichiudiprogram ui-icon-plus ui-btn ui-btn-icon-notext" name="aprichiudiprogramo" data-bind="click: showProgramO"></a>
           <a class="nascondi aprichiudiprogram ui-icon-minus ui-btn ui-btn-icon-notext" name="aprichiudiprogramc" data-bind="click: showProgramC"></a>
@@ -95,9 +95,9 @@
               <a class="ui-btn ui-corner-all" name="pulson" data-bind="click: onMode">on</a>
               <a class="ui-last-child ui-btn ui-corner-all" name="pulsoff" data-bind= "click: offMode">off</a>
             </div>
-          </div>
-          <div class="stagione" data-bind="visible: showseason == 1">
-            <a name="pulsseason" data-bind="text: season(), click: seasonMode"></a>
+            <div class="stagione" data-bind="visible: showseason == 1">
+              <a name="pulsseason" data-bind="text: season(), click: seasonMode"></a>
+            </div>
           </div>
           <div class="nascondi" name="apri">
             <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
@@ -127,7 +127,7 @@
         </div>
       </div>
       <div class="nascondi globale" name="zonaprogram">
-        <div class="graph1">
+        <div class="graph1" data-bind="visible: errore_web != 0">
           <div data-bind="foreach: $data.paginaweb()">
             <div class="bar1" data-bind="style: {backgroundColor: colore, width: larghezza, left: posizione}">
             </div>
@@ -139,7 +139,7 @@
           <div class="bandella-orario bandella-light" data-bind="style: {left: time_pos() + '%'}"></div>
           <div class="segna-orario segna-light" data-bind="text: time_orario, style: {left: time_verso() + '%'}"></div>
         </div>
-        <div class="orari">
+        <div class="orari" data-bind="visible: interfaccia == 0">
           <div data-bind="foreach: $data.paginaweb()">
             <div class="linea" data-bind="style: {width: larghezza, left: posizione}">
               <span data-bind="text: orario">
@@ -147,6 +147,6 @@
             </div>
           </div>
         </div>
-      </div>
+    </div>
     </li>
 </script>

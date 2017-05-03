@@ -132,6 +132,7 @@ if dummy-switch is turned on then set temp of ROOM to 10 and set mode of ROOM to
 TRICK:
 If you want to set from rule the min to automode to End of Day, set minute to automode to 0.307
 If you want to set from rule the min to automode to End of Schedule, set minute to automode to 0.305
+
 ###WEB INTERFACE
 
 ***Plus Button*** open graph interface
@@ -155,12 +156,9 @@ When the border of ***The blue circle*** is ***white*** the valve variable is fa
 ***OFF*** will set the supposed temperature to ***"offtemperature"***
 
 Once click to ***Manu***,***On***,***Off*** It will be asked how long you should be active that function
-Buttons What appear are respectively: add 1 minute, add 5 minutes, add 30 minutes, add 1 hour, add 1 day, add minute to the End Of the Day(***EOD***), add minutes to the end of the schedule(***EOS***) and ALWAYS
+Buttons that appear are respectively: add 1 minute, add 5 minutes, add 30 minutes, add 1 hour, add 1 day, add minute to the End Of the Day(***EOD***), add minutes to the end of the schedule(***EOS***) and ALWAYS
 
 ***winter or summer*** show the season current
-
-
-
 
 ### API
 To set mode from API
