@@ -426,6 +426,17 @@ module.exports = (env) ->
           @valve = true
         else
           @valve = false
+      else
+        if @season is "winter"
+          if @realtemperature < @result
+            @valve = true
+          else
+            @valve = false
+        else
+          if @realtemperature > @result
+            @valve = true
+          else
+            @valve = false
       @emit "valve", @valve
       return Promise.resolve()
     _setAttribute: (attributeName, value) ->
