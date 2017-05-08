@@ -25,7 +25,7 @@
     "Pimatic",
     "thermostat"
   ],
-  "version": "0.9.8-7",
+  "version": "0.9.8-8",
   "homepage": "https://github.com/AleZac/pimatic-chronotherm",
   "private": false,
   "repository": {

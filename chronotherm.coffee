@@ -318,7 +318,7 @@ module.exports = (env) ->
       return Promise.resolve()
     aggiornaTempo: () ->
       @setValve() #set valve to true or false
-      console.log "GIRO aggiornaTempo"
+      # console.log "GIRO aggiornaTempo"
       now = new Date()
       @time = now
       if @timeturnam is 0
@@ -483,6 +483,7 @@ module.exports = (env) ->
           @emit "result", @result
       @_mode = mode
       @emit "mode", @_mode
+      @aggiornaTempo()
       return Promise.resolve()
     setManuTemp: (manuTemp) ->
       if manuTemp is @_manuTemp then return
@@ -491,6 +492,7 @@ module.exports = (env) ->
         @result = @_manuTemp
         @emit "result", @result
       @emit "manuTemp", @_manuTemp
+      @aggiornaTempo()
       return Promise.resolve()
     setMinToAutoModeTo: (mintoautomode) ->
       if mintoautomode is 0.307
