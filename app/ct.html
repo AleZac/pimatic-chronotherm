@@ -139,7 +139,7 @@
           <div class="bandella-orario bandella-light" data-bind="style: {left: time_pos() + '%'}"></div>
           <div class="segna-orario segna-light" data-bind="text: time_orario, style: {left: time_verso() + '%'}"></div>
         </div>
-        <div class="orari" data-bind="visible: interfaccia == 0">
+        <div class="orari" data-bind="visible: interfaccia == 1">
           <div data-bind="foreach: $data.paginaweb()">
             <div class="linea" data-bind="style: {width: larghezza, left: posizione}">
               <span data-bind="text: orario">

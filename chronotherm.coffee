@@ -401,6 +401,13 @@ module.exports = (env) ->
           @result = @config.ontemperature
         else
           @result = @config.offtemperature
+      if @config.interface is 1
+        if @_mode is "on"
+          @result = 1
+        else if @_mode is "off"
+          @result = 0
+        else
+          @result = @_autoTemp
       @emit "autoTemp", @_autoTemp
       @emit "result", @result
       @emit "perweb", array01
